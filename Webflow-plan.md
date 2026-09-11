@@ -623,10 +623,14 @@ nothing in `dist/` that git does not track. Current state: **114 files, exact
 parity, clean build.** That check is what catches a leak or a dropped app the
 next time this config is edited.
 
-Note `package.json` is still at the repo root as well. It was added to get past
-the creation-time validation in §15 and is redundant once the app root is
-`webflow/`. Delete it once app creation is confirmed to honor the app path —
-not before, since it is the only thing known to satisfy that check.
+The repo-root `package.json` is **deleted on this branch**. It existed only to
+get past the creation-time validation in §15; once `webflow/package.json`
+exists, Webflow reports "multiple package.json found" and asks which project
+root to use. Deleting the root one resolves the ambiguity and leaves no fake
+manifest on `main` after the merge. If a future creation attempt reinstates the
+§15 block, that is the signal the check reads the repo root rather than the app
+path — re-add it then, not preemptively. It still exists on `main` and
+disappears with the merge.
 
 ### 16.4 What the wrapper does not fix
 
@@ -642,6 +646,8 @@ Phase 3's reasoning is unchanged.
 - [x] Astro wrapper in `webflow/`, gitignored build artifacts.
 - [x] `npm run build` clean; `npm test` confirms 114-file parity with git.
 - [ ] Push the branch.
+- [x] Delete the repo-root `package.json` — Webflow reported multiple
+      manifests and asked for a project root.
 - [ ] Create the Cloud app: repo `nycfirst-d13/nycfirst-d13.github.io`, branch
       **`d13-app`**, **app root `webflow`**, mount path `d13-app`.
 - [ ] Read the build log. Record the published directory (§3 unknown) — it
@@ -653,7 +659,6 @@ Phase 3's reasoning is unchanged.
 - [ ] Check `/d13-app/health` first — it isolates "did Astro run" from "do the
       static files resolve".
 - [ ] Run Phase 2 verification (§7) against the deployed branch.
-- [ ] Delete the root `package.json` if the app path made it redundant.
 - [ ] Merge `d13-app` to `main`, repoint the environment to `main`, confirm
       GitHub Pages still serves correctly from the merged tree, delete the
       branch.
