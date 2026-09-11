@@ -707,3 +707,74 @@ hand-written relative refs in these files (§16.3).
   published directory. Adding a copy-into-`public/` build to a static app is
   speculative machinery — if the first deploy log says it wants `public/`, it
   is a five-minute addition.
+
+---
+
+## 18. Phase 2 — first deploy: `static` works, directory indexes loop (2026-09-11)
+
+App created successfully at mount path `d13-avi`. **This overturns §16.**
+`static` is implemented, not reserved — the app built, deployed, and serves.
+
+### 18.1 What works
+
+Every non-index asset returns 200 on both `nycfirst.webflow.io/d13-avi` and
+`www.nycfirst.org/d13-avi`: CSS, JS, ES modules, images, `.csv`, `.ogg`.
+Non-index HTML works too — `/d13-avi/card-prompt-builder` returns 200, and
+`/d13-avi/card-prompt-builder.html` 307s to it once, cleanly.
+
+This also resolves the §3 publish-directory unknown: **the repo root is the
+published directory.** No `public/`, no `dist/`, no build step.
+
+### 18.2 What loops
+
+Any URL backed by a directory `index.html`:
+
+```
+/d13-avi   307 -> /d13-avi/     (Webflow Cloud worker)
+/d13-avi/  301 -> /d13-avi      (Webflow site edge)
+```
+
+Infinite. Browsers report ERR_TOO_MANY_REDIRECTS. Same at every level:
+`/d13-avi/arcade`, `/d13-avi/laser-maker`, `/d13-avi/stem-stations`.
+
+### 18.3 Which layer emits which — from response headers
+
+| | 307 (adds slash) | 301 (strips slash) |
+|---|---|---|
+| Identifying headers | `Domain=wf-app-prod.cosmic.webflow.services`, `cf-placement: remote-ATL`, `access-control-allow-origin: *` | `x-wf-region: us-east-1`, `cf-cache-status: HIT` |
+| Layer | Webflow Cloud worker | Webflow site edge |
+
+The Cloud worker canonicalizes directory indexes *toward* a trailing slash.
+The site edge strips trailing slashes globally — confirmed in §15.4 against
+both `/display-api/` and an ordinary Designer page. The two fight.
+
+**This is a Webflow platform bug and cannot be fixed from this repo.** The loop
+resolves at the HTTP layer before any HTML is parsed, so no change to markup,
+`<base>`, `webflow.json`, or file contents affects it.
+
+Why `/display-api` does not loop: it is a framework app whose worker serves its
+mount root directly without a directory-index redirect. The conflict appears to
+be specific to the `static` handler.
+
+### 18.4 Options
+
+1. **Report to Webflow support.** §18.3 is a clean reproduction with the
+   layer attribution done. This is their defect. Slow but correct.
+2. **Eliminate every `index.html`.** Rename `arcade/index.html` to
+   `arcade.html` and so on; assets stay in `arcade/` and the stamped
+   `<base href=".../arcade/">` keeps resolving them. `/d13-avi/arcade` would
+   then serve as a plain file with no directory redirect — the
+   `card-prompt-builder` case proves it. **Does not solve the app root:**
+   `/d13-avi` still maps to the app's own index and would loop or 404.
+   A partial fix that leaves the entry URL broken.
+3. **Switch to Astro** (the §16.1 fallback). `/display-api` demonstrates a
+   framework app serving its mount root without the redirect. Astro copies
+   `public/*` verbatim, so §17's work carries over untouched.
+
+Recommended: 1 and 3 in parallel. 2 only if something must ship immediately
+and a non-root entry URL is acceptable.
+
+### 18.5 Also fixed
+
+Base tags were stamped for `/d13-app` before the mount path was known. Re-run
+as `tools/set-base.sh /d13-avi` and committed. All 54 references verified.
