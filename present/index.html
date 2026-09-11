@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Play With D13's Homegrown Apps</title>
+<title>Play with some of SC @ D13's Homegrown Apps</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
    Present — PD room page.
    Design system lifted from laser-maker/docs/slides-drive-v1.html and
    drive-cloud-saving.html: paper + dot grid, Geist, 1.5px rules,
-   mono eyebrows, blue-soft tint to mark what matters.
+   blue-soft tint to mark what matters.
    ------------------------------------------------------------------ */
 :root {
   --paper:       #E8EFF8;
@@ -57,14 +57,6 @@ body::before {
 }
 .page { position: relative; width: 100%; max-width: 1160px; }
 
-.eyebrow {
-  font-family: var(--font-mono);
-  font-size: clamp(11px, 1.1vw, 13px);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--blue);
-}
 
 /* --- masthead --- */
 .masthead { margin: 0 0 28px; }
@@ -105,7 +97,7 @@ body::before {
 }
 
 /* --- app list, with feedback floated alongside --- */
-.rooms { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+.rooms { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 24px; align-items: start; }
 
 .apps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 .apps a {
@@ -144,48 +136,14 @@ body::before {
   background: var(--surface-2);
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: clamp(15px, 1.8vw, 23px);
-  letter-spacing: -0.01em;
+  font-size: clamp(13px, 1.55vw, 21px);
+  letter-spacing: -0.02em;
   color: var(--ink-2);
+  white-space: nowrap;
 }
-.apps--front .slug { background: rgba(255,255,255,.75); color: var(--blue); }
+.apps--front .slug { background: rgba(255,255,255,.75); color: var(--ink-2); }
+.apps .slug .seg { color: var(--blue); }
 .apps a:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
-
-/* --- feedback --- */
-.feedback {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  margin: 22px 0 0;
-  padding: 14px 18px;
-  background: var(--surface);
-  border: 1.5px solid var(--rule);
-  border-radius: 10px;
-  box-shadow: var(--sh-1);
-}
-.feedback img { width: 92px; height: 92px; display: block; }
-.feedback .copy { flex: 1; }
-.feedback h2 {
-  font-size: clamp(14px, 1.5vw, 18px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  margin: 4px 0 2px;
-}
-.feedback p { font-size: clamp(12px, 1.3vw, 15px); color: var(--ink-3); }
-.feedback .short {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 6px 14px;
-  border-radius: 6px;
-  background: var(--blue-soft);
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: clamp(15px, 1.8vw, 23px);
-  color: var(--blue);
-  text-decoration: none;
-}
-.feedback .short:hover { text-decoration: underline; text-underline-offset: 3px; }
-.feedback .short:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 /* Feedback is not a card — no chrome, no fill. Blue type and a bare QR, centred in its
    column and vertically centred against the app stack, so it reads as floating beside them. */
@@ -227,7 +185,7 @@ body::before {
 .fb:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
 .fb:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .rooms { grid-template-columns: 1fr; }
   .host { white-space: normal; }
 }
@@ -241,8 +199,7 @@ body::before {
         <img src="../nyfc-d13_decal-logo.png" alt="">
         <img src="../d13_logo.png" alt="">
       </div>
-      <p class="eyebrow">NYC FIRST District 13 &middot; STEM Center</p>
-      <h1>Play With D13&rsquo;s Homegrown Apps</h1>
+      <h1>Play with some of SC @ D13&rsquo;s Homegrown Apps</h1>
       <p class="sub">Purpose-built tools for STEM classrooms</p>
       <span class="host">nycfirst-d13.github.io<span class="seg">/present</span></span>
       <div class="rule"></div>
@@ -254,17 +211,17 @@ body::before {
         <li><a href="https://nycfirst-d13.github.io/laser-maker">
           <span class="name">Laser Maker</span>
           <span class="what">Design vector files for the laser cutter</span>
-          <span class="slug">/laser-maker</span>
+          <span class="slug">nycfirst-d13.github.io<span class="seg">/laser-maker</span></span>
         </a></li>
         <li><a href="https://nycfirst-d13.github.io/stem-stations">
           <span class="name">STEM Stations</span>
           <span class="what">STEM activities for kids</span>
-          <span class="slug">/stem-stations</span>
+          <span class="slug">nycfirst-d13.github.io<span class="seg">/stem-stations</span></span>
         </a></li>
         <li><a href="https://nycfirst-d13.github.io/arcade">
           <span class="name">D13 Arcade</span>
           <span class="what">Play student-made MakeCode games</span>
-          <span class="slug">/arcade</span>
+          <span class="slug">nycfirst-d13.github.io<span class="seg">/arcade</span></span>
         </a></li>
       </ul>
 
