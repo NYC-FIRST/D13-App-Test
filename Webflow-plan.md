@@ -11,9 +11,9 @@ repo, neither pointing at the other. It is switched off in Phase 7, once the
 Cloud app is proven and the new URL has been distributed. Nothing in this plan
 proxies, redirects, or falls back to Pages by design.
 
-**Status:** Phase 0 complete (2026-09-11). Phase 1 blocked — `package.json`
-added and the repo now validates, but app creation silently reverts to the form
-instead of deploying. See §15.
+**Status:** Phase 0 complete (2026-09-11). Phase 1 blocked: framework `static`
+does not work (§15). Current approach is a Next.js wrapper on a `d13-app`
+branch (§16).
 
 ---
 
@@ -533,3 +533,94 @@ Diagnostic order, cheapest first:
 This supersedes §4's "do not test at a throwaway mount path" for *diagnosis*
 only. That argument was about not tuning hardcoded base-path remedies twice;
 no code has been changed yet, so a temporary mount path costs nothing here.
+
+---
+
+## 16. Phase 1b — framework wrapper on a `d13-app` branch (2026-09-11)
+
+`static` is out. Evidence: app creation is accepted with a `package.json`
+present, then initialization silently reverts to the form — no error, no
+deployment, at three different mount paths (`d13-app` before and after deleting
+the colliding Designer page, and `d13app`). Every executable surface names only
+two frameworks:
+
+| Source | Accepted `framework` values |
+|---|---|
+| BYOA doc, `webflow.json` note | `nextjs`, `astro`, `vite`, `static` |
+| CLI `webflow.json` reference | "either `nextjs` or `astro`" |
+| `apps init --framework` | `astro`, `nextjs` |
+| `apps deploy --framework` | `nextjs`, `astro` |
+
+One sentence in the entire corpus says `static`. Treat it as reserved and
+unimplemented.
+
+**The Webflow MCP server cannot help here.** Its tools cover CMS, pages,
+elements, styles, assets, forms, comments, localization, scripts and
+publishing. There is no Cloud app, environment, or deployment surface — Cloud
+app management is UI or CLI only. The UI swallows the error; the CLI prints it
+(`webflow apps init --import … --dry-run --json`, CLI installed locally at
+`2.8.0-next.2`, login pending).
+
+### 16.1 Approach
+
+A branch, `d13-app`, that adds a framework wrapper around the existing vanilla
+files. Webflow Cloud environments track one branch, so the env points at
+`d13-app` through Phases 1–2. `main` — and therefore GitHub Pages — is
+untouched while the wrapper is proven. After Phase 2 verification the branch
+merges to `main` and the env repoints there.
+
+**Framework: Next.js**, per decision on 2026-09-11.
+
+Astro is the cheaper wrapper and is recorded here as the fallback if Next
+fights back: Astro copies `public/*` into `dist/` verbatim and needs no routes
+at all, so `public/index.html` simply becomes `/`. Next with
+`output: 'export'` requires at least one real route, and `app/page.tsx` writes
+`out/index.html` — which collides with the repo's own root `index.html`. That
+collision has to be handled explicitly.
+
+### 16.2 Hard constraints on the wrapper
+
+1. **Do not move the 145 files.** GitHub Pages serves the repo root; moving
+   them into `public/` breaks Pages the moment the branch merges, which would
+   end the dual-host period and pull Phase 7 forward. The wrapper collects
+   them into `public/` (or straight into the export output) **at build time**,
+   from a gitignored directory.
+2. **`public/` and the build output are gitignored.** Nothing generated gets
+   committed.
+3. **No hardcoded base path in the wrapper.** Read it from Webflow's injected
+   `BASE_URL` / `ASSETS_PREFIX`.
+4. **Wrapper files must be inert on GitHub Pages.** Pages ignores
+   `package.json`, `next.config.*`, `webflow.json`, `app/` — verify nothing
+   shadows a real route (e.g. do not add a root `app/page.tsx` that would ever
+   be served by Pages).
+5. **No new dependency the vanilla apps consume.** The wrapper is packaging
+   only; the six child apps keep running as plain HTML/CSS/JS.
+
+### 16.3 What the wrapper does not fix
+
+§4 still applies. `basePath` / `base` rewrites only framework-generated URLs —
+it does not touch hand-written `href="styles.css"` in these files. At a
+slash-less mount root those still resolve against the domain root. Phase 2
+checks; Phase 3 chooses between a `<base href>` sweep and jumping to the
+subdomain (§10), and Phase 3's reasoning is unchanged.
+
+### 16.4 Steps
+
+- [ ] Branch `d13-app` off `main`.
+- [ ] Add the Next.js wrapper: `package.json` deps, `next.config.*` with
+      `output: 'export'` and base path from env, the minimum route Next
+      demands, a build step that collects the root files into the export
+      output, and `.gitignore` entries for the generated directories.
+- [ ] Resolve the root `index.html` collision explicitly — decide whether the
+      repo's file or a Next route owns `/`, and record it here.
+- [ ] Verify `npm run build` locally, then that the output tree matches the
+      repo's own layout (every child app, every asset).
+- [ ] Update `webflow.json` to `"framework": "nextjs"`.
+- [ ] Push the branch. Create the Cloud app against branch `d13-app`, mount
+      `d13-app`.
+- [ ] Read the build log. If creation fails again, the wrapper is not the
+      problem — get the CLI dry-run error before changing anything else.
+- [ ] Run Phase 2 verification (§7) against the deployed branch.
+- [ ] Merge `d13-app` to `main`, repoint the environment to `main`, confirm
+      GitHub Pages still serves correctly from the merged tree, delete the
+      branch.
