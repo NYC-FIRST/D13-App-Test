@@ -2,8 +2,11 @@
   "name": "nycfirst-d13",
   "version": "1.0.0",
   "private": true,
-  "description": "Static site. No build step — webflow.json pins Webflow Cloud framework to static.",
+  "description": "Static site served from the repo root. No build step; webflow.json pins the Webflow Cloud framework to static.",
   "scripts": {
-    "build": "echo 'static site, nothing to build'"
+    "build": "echo 'static site - repo root is the published directory, nothing to build'",
+    "set-base": "tools/set-base.sh",
+    "check": "python3 tools/check-links.py",
+    "serve": "python3 tools/serve-like-webflow.py"
   }
 }

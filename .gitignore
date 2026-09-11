@@ -11,3 +11,8 @@ node_modules/
 # Claude Code local state
 .claude/
 .DS_Store
+
+# Webflow Cloud / framework build output
+public/
+dist/
+out/
