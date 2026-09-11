@@ -45,8 +45,16 @@ while IFS= read -r f; do
   fi
 
   dir="$(dirname "$f")"
+  stem="$(basename "$f" .html)"
+
+  # A page named <x>.html that sits beside a directory <x>/ owns that
+  # directory's assets, so its base is the directory - not its own location.
+  # This is the shape that avoids Webflow Cloud's directory-index redirect
+  # loop: arcade.html serves at /arcade and its assets live in /arcade/.
   if [ "$dir" = "." ]; then
-    base="$MOUNT/"
+    if [ -d "$stem" ]; then base="$MOUNT/$stem/"; else base="$MOUNT/"; fi
+  elif [ -d "$dir/$stem" ]; then
+    base="$MOUNT/$dir/$stem/"
   else
     base="$MOUNT/$dir/"
   fi

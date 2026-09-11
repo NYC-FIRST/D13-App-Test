@@ -9,7 +9,7 @@
 </head>
 <body class="play">
   <header class="top">
-    <a class="brand" href="./">
+    <a class="brand" href="../arcade">
       <img src="nycfirst-pixel.png" alt="NYC FIRST District 13" width="40" height="40">
       <span class="title">D13 Arcade</span>
     </a>
@@ -35,7 +35,7 @@
         ? `<a class="btn" href="${esc(g.student_url)}" target="_blank" rel="noreferrer">See code <span class="ico">↗</span></a>`
         : ''
       actions.innerHTML =
-        `<a class="btn" href="./"><span class="ico">←</span> Gallery</a>` +
+        `<a class="btn" href="../arcade"><span class="ico">←</span> Gallery</a>` +
         src +
         `<button class="btn" onclick="document.getElementById('stage').requestFullscreen()"><span class="ico">⛶</span> Fullscreen</button>`
       app.innerHTML =
@@ -56,12 +56,12 @@
     let wasFullscreen = false
     addEventListener('fullscreenchange', () => {
       if (document.fullscreenElement) { wasFullscreen = true; return }
-      if (wasFullscreen) location.href = './'
+      if (wasFullscreen) location.href = '../arcade'
     })
-    addEventListener('keydown', e => { if (e.key === 'Escape') location.href = './' })
+    addEventListener('keydown', e => { if (e.key === 'Escape') location.href = '../arcade' })
 
     function showState(msg) {
-      actions.innerHTML = `<a class="btn" href="./"><span class="ico">←</span> Gallery</a>`
+      actions.innerHTML = `<a class="btn" href="../arcade"><span class="ico">←</span> Gallery</a>`
       app.innerHTML = `<div class="state"><p class="pixel">${esc(msg)}</p></div>`
     }
 

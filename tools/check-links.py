@@ -30,15 +30,16 @@ SKIP     = ("http://", "https://", "//", "data:", "mailto:", "tel:",
 def main():
     html = tracked("*.html")
     # The mount prefix is whatever precedes the repo-relative dir in <base>.
-    mount = None
+    # The mount is the common prefix of every stamped base, i.e. the shortest.
+    bases = []
     for f in html:
-        src = open(f, encoding="utf-8", errors="replace").read()
-        m = BASE_RE.search(src)
-        if m and f == "index.html":
-            mount = m.group(1).rstrip("/")
-    if mount is None:
-        print("no <base> in index.html - run tools/set-base.sh first", file=sys.stderr)
+        m = BASE_RE.search(open(f, encoding="utf-8", errors="replace").read())
+        if m:
+            bases.append(m.group(1))
+    if not bases:
+        print("no <base> tags found - run tools/set-base.sh first", file=sys.stderr)
         return 2
+    mount = min(bases, key=len).rstrip("/")
 
     problems, checked, no_base = [], 0, []
 
@@ -54,7 +55,9 @@ def main():
         checked += 1
         if rel == "" or rel.endswith("/"):
             rel += "index.html"
-        if os.path.isfile(rel) or os.path.isfile(os.path.join(rel, "index.html")):
+        # A bare /foo may be served by foo.html or foo/index.html.
+        if (os.path.isfile(rel) or os.path.isfile(rel + ".html")
+                or os.path.isfile(os.path.join(rel, "index.html"))):
             return
         problems.append((origin, ref, resolved, kind, "no file"))
 

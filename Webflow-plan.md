@@ -778,3 +778,57 @@ and a non-root entry URL is acceptable.
 
 Base tags were stamped for `/d13-app` before the mount path was known. Re-run
 as `tools/set-base.sh /d13-avi` and committed. All 54 references verified.
+
+---
+
+## 19. Phase 2a — Option 2 applied: no directory indexes (2026-09-11)
+
+§18.4 option 2. Every `index.html` renamed so no URL is backed by a directory
+index, which is the only shape that triggers the §18.2 loop.
+
+| Was | Now | Serves at |
+|---|---|---|
+| `index.html` | `home.html` | `/d13-avi/home` |
+| `arcade/index.html` | `arcade.html` | `/d13-avi/arcade` |
+| `bed-maker/index.html` | `bed-maker.html` | `/d13-avi/bed-maker` |
+| `bird-bingo/index.html` | `bird-bingo.html` | `/d13-avi/bird-bingo` |
+| `hello-waves/index.html` | `hello-waves.html` | `/d13-avi/hello-waves` |
+| `laser-maker/index.html` | `laser-maker.html` | `/d13-avi/laser-maker` |
+| `present/index.html` | `present.html` | `/d13-avi/present` |
+| `stem-stations/index.html` | `stem-stations.html` | `/d13-avi/stem-stations` |
+
+Every child-app URL is unchanged. Only the root moves, `/d13-avi` ->
+`/d13-avi/home`.
+
+Asset directories are untouched: `arcade.html` sits beside `arcade/` and
+`set-base.sh` now stamps `<base href="/d13-avi/arcade/">` for a page whose
+name matches a sibling directory, so every relative reference still points
+into that directory.
+
+### 19.1 Verification
+
+`tools/serve-like-webflow.py` was rewritten to model *both* Webflow layers, so
+it reproduced all 8 live loops before the rename and reports none after.
+Every page URL now returns 200 in **zero** redirect hops. Arcade and Laser
+Maker render in a browser with no console errors.
+
+### 19.2 The app root still does not serve
+
+`/d13-avi` maps to the app's own root directory. With no `index.html` there it
+404s, and restoring one would restore the loop — those are the only two
+outcomes available from this repo. **The entry URL is `/d13-avi/home`.**
+
+Untested idea, no code required: a site-level redirect `/d13-avi` ->
+`/d13-avi/home` in Site Settings > Publishing > Redirects. The site edge
+already acts before the Cloud app (it is what emits the §18.3 301), so a rule
+there may well win. Worth one attempt before accepting the bare root as dead.
+
+### 19.3 Follow-ups
+
+- Child `CLAUDE.md` files still describe `index.html` filenames. Left stale on
+  purpose: if the Astro wrapper (§18.4 option 3) lands, this rename reverts and
+  the churn would be wasted. Fix them if this shape becomes permanent.
+- `card-prompt-builder.html`'s Menu button was repointed to `home.html`.
+- `href="./"` in the arcade pages became `href="../arcade"`, which resolves
+  directly instead of depending on the edge's trailing-slash 301 - the same
+  machinery that caused the loop.

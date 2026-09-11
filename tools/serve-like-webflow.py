@@ -1,78 +1,133 @@
 #!/usr/bin/env python3
-"""Serve the repo the way Webflow Cloud (Cloudflare Workers Assets) does, so
-breakage can be found locally instead of on the Nth deploy.
+"""Serve the repo the way Webflow Cloud actually behaves, including the
+redirect loop, so breakage is reproducible locally.
 
-Emulates `auto-trailing-slash` html_handling plus a mount prefix:
-  /d13-app/arcade/   -> 301 /d13-app/arcade
-  /d13-app/arcade    -> serves arcade/index.html
-  /d13-app/foo.html  -> 301 /d13-app/foo
-  /d13-app/foo       -> serves foo.html
+Observed 2026-09-11 against www.nycfirst.org/d13-avi. TWO layers act:
 
-Usage:  tools/serve-like-webflow.py [--mount /d13-app] [--port 8787]
+  Webflow Cloud worker (wf-app-prod.cosmic.webflow.services)
+    /x.html          307 -> /x           (strip the extension)
+    /x  where x/index.html exists
+                     307 -> /x/          (canonicalise toward a directory)
+    /x  where x.html exists              serve it
+  Webflow site edge (x-wf-region)
+    /x/              301 -> /x           (strip the trailing slash)
+
+Those two rules collide on any directory index: /x -> /x/ -> /x -> ... which
+is the ERR_TOO_MANY_REDIRECTS users see. This server reproduces that, and
+reports LOOP when a path cycles, so the fix can be verified before deploying.
+
+Usage:  tools/serve-like-webflow.py [--mount /d13-avi] [--port 8787]
 """
 import argparse, os, posixpath, sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote, urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MOUNT = "/d13-app"
+MOUNT = "/d13-avi"
+
+
+def resolve(rel):
+    """Return ('serve', diskpath) | ('redirect', code, newpath) | ('404', None)."""
+    disk = posixpath.normpath(rel).lstrip("/")
+
+    # Site edge: strip a trailing slash (never at the mount root).
+    if rel.endswith("/") and rel != "/":
+        return ("redirect", 301, rel.rstrip("/"))
+
+    # Worker: strip a .html extension.
+    if rel.endswith(".html"):
+        base = rel[:-5]
+        if base.endswith("/index"):
+            base = base[: -len("index")] or "/"
+        return ("redirect", 307, base)
+
+    if rel == "/":
+        disk = ""
+
+    # Worker: a directory holding index.html canonicalises toward the slash.
+    if os.path.isfile(os.path.join(ROOT, disk, "index.html")):
+        return ("redirect", 307, "/" + disk + "/" if disk else "/")
+
+    for cand in (disk, disk + ".html"):
+        if cand and os.path.isfile(os.path.join(ROOT, cand)):
+            return ("serve", cand)
+    return ("404", None)
 
 
 class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=ROOT, **kw)
 
-    def _redirect(self, to):
-        self.send_response(301)
-        self.send_header("Location", to)
-        self.end_headers()
-
     def do_GET(self, head=False):
         parsed = urlparse(self.path)
-        path, query = unquote(parsed.path), parsed.query
-        suffix = ("?" + query) if query else ""
-
+        path = unquote(parsed.path)
+        suffix = ("?" + parsed.query) if parsed.query else ""
         if MOUNT and not path.startswith(MOUNT):
             self.send_error(404, "outside mount %s" % MOUNT)
             return
-        rel = path[len(MOUNT):] if MOUNT else path
+        rel = path[len(MOUNT):] or "/"
 
-        # /foo.html -> /foo   (auto-trailing-slash strips the extension)
-        if rel.endswith(".html"):
-            base = rel[:-5]
-            if base.endswith("/index"):
-                base = base[: -len("index")]
-            self._redirect(MOUNT + (base or "/") + suffix)
-            return
-
-        # /foo/ -> /foo   (strip the trailing slash), except the mount root
-        if rel.endswith("/") and rel != "/":
-            self._redirect(MOUNT + rel.rstrip("/") + suffix)
-            return
-
-        disk = posixpath.normpath(rel).lstrip("/")
-        for cand in ([disk] if disk else []) + [
-            os.path.join(disk, "index.html"), disk + ".html", "index.html" if not disk else None
-        ]:
-            if cand and os.path.isfile(os.path.join(ROOT, cand)):
-                self.path = "/" + cand
-                return super().do_HEAD() if head else super().do_GET()
-
-        self.send_error(404, "no asset for %s" % path)
+        kind, *rest = resolve(rel)
+        if kind == "redirect":
+            code, to = rest
+            self.send_response(code)
+            self.send_header("Location", MOUNT + to + suffix)
+            self.end_headers()
+        elif kind == "serve":
+            self.path = "/" + rest[0]
+            return super().do_HEAD() if head else super().do_GET()
+        else:
+            self.send_error(404, "no asset for %s" % path)
 
     def do_HEAD(self):
         self.do_GET(head=True)
 
-    def log_message(self, fmt, *args):
+    def log_message(self, *a):
         pass
+
+
+def audit():
+    """Walk every page URL and report which ones cycle."""
+    pages, loops = [], []
+    for dirpath, _, files in os.walk(ROOT):
+        if "/.git" in dirpath:
+            continue
+        for fn in files:
+            if not fn.endswith(".html"):
+                continue
+            rel = os.path.relpath(os.path.join(dirpath, fn), ROOT)
+            pages.append("/" + (rel[:-len("/index.html")] if rel.endswith("/index.html")
+                                else "" if rel == "index.html" else rel[:-5]))
+    for url in sorted(set(pages)):
+        seen, cur = [], url or "/"
+        for _ in range(12):
+            if cur in seen:
+                loops.append((url, seen + [cur]))
+                break
+            seen.append(cur)
+            kind, *rest = resolve(cur)
+            if kind != "redirect":
+                break
+            cur = rest[1]
+    print(f"page URLs checked: {len(set(pages))}")
+    if loops:
+        print(f"\nREDIRECT LOOPS ({len(loops)}):")
+        for url, chain in loops:
+            print(f"  {MOUNT}{url}\n      {' -> '.join(chain)}")
+        return 1
+    print("no redirect loops ✓")
+    return 0
 
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mount", default="/d13-app")
+    ap.add_argument("--mount", default="/d13-avi")
     ap.add_argument("--port", type=int, default=8787)
+    ap.add_argument("--audit", action="store_true",
+                    help="report looping page URLs and exit")
     a = ap.parse_args()
     MOUNT = a.mount.rstrip("/")
-    print(f"serving {ROOT} at http://127.0.0.1:{a.port}{MOUNT or '/'} "
-          f"(Webflow Cloud convention)", flush=True)
+    if a.audit:
+        sys.exit(audit())
+    print(f"serving {ROOT} at http://127.0.0.1:{a.port}{MOUNT or '/'}", flush=True)
     ThreadingHTTPServer(("127.0.0.1", a.port), Handler).serve_forever()
