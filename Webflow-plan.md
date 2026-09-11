@@ -11,7 +11,8 @@ repo, neither pointing at the other. It is switched off in Phase 7, once the
 Cloud app is proven and the new URL has been distributed. Nothing in this plan
 proxies, redirects, or falls back to Pages by design.
 
-**Status:** not started. Nothing below has been executed.
+**Status:** Phase 0 complete (2026-09-11). Phase 1 not started — no
+`webflow.json`, no Cloud app.
 
 ---
 
@@ -94,7 +95,7 @@ plan around a guess; each has a cheap empirical resolution.
 | Whether `package.json` is required for `static` | First deploy. If detection fails, `webflow.json` should still pin it. |
 | Deployment limits (file count, file size, total size) | 145 files / 11 MB is small; unlikely to matter. |
 | Whether the trailing-slash 301 is platform-wide or specific to the display-api app's own router | Phase 2 test deploy. |
-| Whether site password protection covers Cloud apps | Phase 2 — the site is password-protected today (`/d13-app` and `/poster-display-codex` both return 401). **Blocking for student access.** |
+| Whether site password protection covers Cloud apps | Phase 2 — note the behavior, don't gate on it. The 401 is pre-launch safety on the Webflow site, not a user-facing state at deployment. |
 | Whether a mount path of `/` is permitted (needed for the subdomain plan) | Phase 5 — test, or ask Webflow support. |
 | How far back Webflow Cloud's redeployable build history goes | Phase 1 — check the environment dashboard. This is the rollback mechanism after Phase 7 (§11). |
 
@@ -126,8 +127,13 @@ The same applies one level down: at `/d13-app/laser-maker`, a reference to
 `modules/canvas-cache.js` resolves to `/d13-app/modules/canvas-cache.js`, not
 `/d13-app/laser-maker/modules/canvas-cache.js`.
 
-This is why Phase 1 deploys to a **throwaway mount path** — find out before
-claiming the real URL. Remedies in Phase 3.
+Phase 2 checks for this on the first deploy. Remedies in Phase 3.
+
+Do not test this at a throwaway mount path first. `/d13-app` has no traffic and
+no inbound links today, so there is nothing to protect; changing a mount path
+later forces a redeploy and a full re-verification anyway; and the remedy below
+hardcodes the mount path, so tuning it against a temporary path means editing
+all 7 files twice.
 
 Note that this problem is an artifact of the *mount path*, not of Webflow
 Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
@@ -136,15 +142,12 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
 
 ## 5. Phase 0 — pre-flight
 
-- [ ] Confirm admin/owner rights on the **`nycfirst-d13`** GitHub org. The
-      existing Cloud app lives under the separate `NYC-FIRST` org, so the
-      Webflow Cloud GitHub App needs a second, separate install scoped to
-      `nycfirst-d13`.
-- [ ] Confirm the Webflow site plan permits an additional Cloud app.
-- [ ] **Resolve the password-protection question.** The site returns 401 today.
-      If the Cloud app inherits that and students can't be handed a password,
-      the migration stalls at Phase 4 regardless of everything else working.
-- [ ] Start an inventory of where `nycfirst-d13.github.io` URLs have been
+- [x] **Admin/owner rights confirmed.** Repo owner on `nycfirst-d13`, cleared
+      with the Webflow admin. The existing Cloud app lives under the separate
+      `NYC-FIRST` org, so expect a second, separate GitHub App install prompt
+      scoped to `nycfirst-d13`.
+- [x] Confirm the Webflow site plan permits an additional Cloud app.
+- [x] Start an inventory of where `nycfirst-d13.github.io` URLs have been
       shared — student handouts, Google Classroom, slide decks, QR codes,
       printed material, the NYC FIRST Webflow site itself. Those links keep
       working through the whole migration and die only at Phase 7, so this is
@@ -153,7 +156,7 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
 
 ## 6. Phase 1 — first deploy to a test mount
 
-- [ ] Add `webflow.json` at repo root:
+- [x] Add `webflow.json` at repo root:
 
       {
         "cloud": {
@@ -175,8 +178,7 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
 - [ ] **New app** → import `nycfirst-d13/nycfirst-d13.github.io`. If the repo
       doesn't appear in the picker, paste the full repo URL directly.
 - [ ] Approve the GitHub App install for the `nycfirst-d13` org.
-- [ ] Branch: `main`. App root: blank. Mount path: **`d13-app-test`** — not
-      `d13-app`.
+- [ ] Branch: `main`. App root: blank. Mount path: **`d13-app`**.
 - [ ] Deploy. Read the build log and record which directory was published
       (resolves an unknown from §3).
 - [ ] Check the environment dashboard for redeployable build history — this is
@@ -187,16 +189,17 @@ GitHub Pages. Two hosts, same commit, no coordination needed between them.
 
 ## 7. Phase 2 — verify
 
-Against `nycfirst.org/d13-app-test`, with the browser console open:
+Against `nycfirst.org/d13-app`, with the browser console open:
 
 - [ ] Root page renders; `styles.css` and the logo images load (no 404s).
-- [ ] Note whether `/d13-app-test/` 301s to `/d13-app-test`.
+- [ ] Note whether `/d13-app/` 301s to `/d13-app`.
 - [ ] Each child app opens and loads its own assets:
       `arcade`, `bed-maker`, `bird-bingo`, `hello-waves`, `laser-maker`,
       `stem-stations`.
 - [ ] `card-prompt-builder.html` opens.
-- [ ] Password protection: confirm whether the Cloud app sits behind the site
-      password, and whether that is workable for student access.
+- [ ] Password protection: note whether the Cloud app sits behind the site
+      password. Informational — the 401 is pre-launch safety, lifted before
+      anyone is sent to the URL.
 - [ ] Apps Script endpoints still work from the new origin — three of them, all
       origin-agnostic in principle but untested from `nycfirst.org`:
       - `laser-maker/modules/drive-upload.js` (Drive upload, PIN-gated)
@@ -227,7 +230,8 @@ work — but it becomes unreachable at Phase 7. Affected files:
    fixes every reference below it. **This breaks GitHub Pages** for as long as
    both hosts are live, since it hardcodes the Webflow mount path — acceptable
    only if you're willing to bring Phase 7 forward and end the dual-host
-   period early. Cost beyond that: Phase 5 means editing those 7 lines again.
+   period early. Cost beyond that: Phase 5 means editing those 7 lines again
+   (or deleting them, if the subdomain serves at root).
 2. **Jump to Phase 5 first.** At the root of `d13.nycfirst.org` there is no
    mount path and no base-URL problem at all. Zero code changes, and GitHub
    Pages keeps working untouched throughout.
@@ -235,15 +239,10 @@ work — but it becomes unreachable at Phase 7. Affected files:
 Option 2 is the better default — it costs nothing and preserves the dual-host
 period. Record the decision here before proceeding.
 
-## 9. Phase 4 — mount at the real path
+## 9. Phase 4 — roll out
 
 Non-destructive. GitHub Pages keeps serving throughout.
 
-- [ ] Change the environment's mount path from `d13-app-test` to `d13-app`
-      (ellipsis menu → edit → save).
-- [ ] **Redeploy.** Webflow requires a redeploy after a mount-path change so
-      base-path references update.
-- [ ] Re-run the Phase 2 checklist against `nycfirst.org/d13-app`.
 - [ ] Delete or repurpose the now-shadowed Designer page
       `6a9990cb967581032d3aee6e`.
 - [ ] Start pointing people at the new URL. Work through the Phase 0 inventory.
@@ -408,11 +407,11 @@ have exported anything they cared about.
 
 ## 14. Sequencing
 
-    Phase 0  pre-flight  ── password question is the gate
-    Phase 1  deploy to /d13-app-test        ┐
+    Phase 0  pre-flight  ── admin access confirmed; plan check + link inventory
+    Phase 1  deploy, mounted at /d13-app    ┐
     Phase 2  verify  ──► broken? ──► Phase 3 │  GitHub Pages live
                             └─► opt 2 ──┐    │  throughout, no redirect
-    Phase 4  mount at /d13-app          │    │
+    Phase 4  roll out                   │    │
     Phase 6  documentation sweep        │    │
     Phase 5  subdomain  ◄───────────────┘    ┘
     Phase 7  retire GitHub Pages            ← point of no return
