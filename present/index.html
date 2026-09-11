@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play With D13's Homegrown Apps</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  /* present page — projector-first: big type, one screen, no scroll */
+  #present-page { padding: 32px 24px; }
+  #present-page .wrap { max-width: 1100px; }
+
+  #present-page .card-header { justify-content: center; text-align: center; margin: 0 0 28px; }
+  #present-page .card-logos img { height: 56px; }
+  #present-page h1 {
+    margin: 0;
+    font-size: clamp(22px, 3.2vw, 38px);
+    line-height: 1.2;
+  }
+  #present-page h1 .sub {
+    display: block;
+    font-weight: 400;
+    font-size: 0.6em;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  .app-row {
+    list-style: none;
+    margin: 0 0 36px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .app-row li { flex: 1 1 260px; }
+  .app-row a {
+    display: block;
+    background: var(--surface-light);
+    border: 2px solid var(--border-light);
+    border-radius: 18px;
+    padding: 22px 18px;
+    text-decoration: none;
+    color: var(--text-primary);
+    text-align: center;
+  }
+  .app-row a:hover { background: var(--surface-hover); }
+  .app-row .name { display: block; font-weight: 800; font-size: clamp(18px, 2vw, 24px); }
+  .app-row .blurb { display: block; color: var(--text-muted); font-size: 14px; margin: 4px 0 12px; }
+  .app-row .url {
+    display: block;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: clamp(17px, 1.8vw, 22px);
+    font-weight: 700;
+    white-space: nowrap;
+    color: var(--primary-dark);
+  }
+  /* host on its own line so the path never wraps mid-word on a projector */
+  .app-row .host {
+    display: block;
+    font-size: 0.72em;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .feedback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+    background: var(--surface-faint);
+    border-radius: 18px;
+    padding: 24px;
+  }
+  .feedback img { width: 180px; height: 180px; }
+  .feedback h2 { font-size: clamp(18px, 2vw, 26px); }
+  .feedback .url {
+    display: inline-block;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: clamp(18px, 2.2vw, 28px);
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-decoration: none;
+    word-break: break-all;
+  }
+  .feedback .url:hover { text-decoration: underline; }
+  .feedback p { color: var(--text-muted); margin: 4px 0 10px; }
+</style>
+</head>
+<body id="present-page">
+  <div class="wrap">
+    <div class="card">
+
+      <div class="card-header">
+        <div class="card-logos" aria-hidden="true">
+          <img src="../nyfc-d13_decal-logo.png" alt="">
+          <img src="../d13_logo.png" alt="">
+        </div>
+        <h1>Play With D13&rsquo;s Homegrown Apps
+          <span class="sub">Purpose-Built Tools for STEM Classrooms</span>
+        </h1>
+      </div>
+
+      <ul class="app-row">
+        <li>
+          <a href="https://nycfirst-d13.github.io/laser-maker">
+            <span class="name">Laser Maker</span>
+            <span class="blurb">Design vector files for the laser cutter</span>
+            <span class="url"><span class="host">nycfirst-d13.github.io/</span>laser-maker</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://nycfirst-d13.github.io/stem-stations">
+            <span class="name">STEM Stations</span>
+            <span class="blurb">Digital station cards for the space</span>
+            <span class="url"><span class="host">nycfirst-d13.github.io/</span>stem-stations</span>
+          </a>
+        </li>
+        <li>
+          <a href="https://nycfirst-d13.github.io/arcade">
+            <span class="name">D13 Arcade</span>
+            <span class="blurb">Play student-made MakeCode games</span>
+            <span class="url"><span class="host">nycfirst-d13.github.io/</span>arcade</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="feedback">
+        <img src="feedback-qr.svg" alt="QR code linking to the feedback form">
+        <div>
+          <h2>Feedback &amp; bug reports</h2>
+          <p>Tell us what worked, what broke, what you&rsquo;d want next.</p>
+          <a class="url" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
