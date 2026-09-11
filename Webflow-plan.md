@@ -561,66 +561,99 @@ app management is UI or CLI only. The UI swallows the error; the CLI prints it
 (`webflow apps init --import … --dry-run --json`, CLI installed locally at
 `2.8.0-next.2`, login pending).
 
-### 16.1 Approach
+### 16.1 Approach — Astro wrapper in `webflow/`, on a `d13-app` branch
 
-A branch, `d13-app`, that adds a framework wrapper around the existing vanilla
-files. Webflow Cloud environments track one branch, so the env points at
-`d13-app` through Phases 1–2. `main` — and therefore GitHub Pages — is
-untouched while the wrapper is proven. After Phase 2 verification the branch
-merges to `main` and the env repoints there.
+A branch, `d13-app`, adds an Astro wrapper that packages the existing vanilla
+files for Webflow Cloud. Webflow Cloud environments track one branch, so the
+env points at `d13-app` through Phases 1–2 while `main` — and therefore GitHub
+Pages — stays untouched. After Phase 2 verification the branch merges to `main`
+and the env repoints there.
 
-**Framework: Next.js**, per decision on 2026-09-11.
+**Framework: Astro**, decided 2026-09-11, over Next.js. Astro copies `public/*`
+into `dist/` verbatim and needs no routes, so the repo's own `index.html`
+becomes `/` with nothing to reconcile. Next's `output: 'export'` writes
+`out/index.html` from `app/page.tsx`, which collides with the repo's root
+`index.html` — and the tempting fix for that collision (rename or move the root
+file) is exactly the change that breaks GitHub Pages. Astro removes the
+temptation. It is also a smaller dependency and a lighter worker bundle against
+the 10 MB cap.
 
-Astro is the cheaper wrapper and is recorded here as the fallback if Next
-fights back: Astro copies `public/*` into `dist/` verbatim and needs no routes
-at all, so `public/index.html` simply becomes `/`. Next with
-`output: 'export'` requires at least one real route, and `app/page.tsx` writes
-`out/index.html` — which collides with the repo's own root `index.html`. That
-collision has to be handled explicitly.
+**The wrapper lives in `webflow/`**, set as the environment's app root, rather
+than at the repo root. Webflow clones the whole repo and builds in the
+configured app path, so a subdirectory works. This keeps the Node toolchain out
+of the repo root permanently: after the merge, `main` gains one clearly-labeled
+folder instead of a lockfile, a config and an `app/` directory scattered across
+the root that students and volunteers have to step around. Phase 7, or leaving
+Webflow entirely, deletes one folder.
 
 ### 16.2 Hard constraints on the wrapper
 
-1. **Do not move the 145 files.** GitHub Pages serves the repo root; moving
-   them into `public/` breaks Pages the moment the branch merges, which would
-   end the dual-host period and pull Phase 7 forward. The wrapper collects
-   them into `public/` (or straight into the export output) **at build time**,
-   from a gitignored directory.
-2. **`public/` and the build output are gitignored.** Nothing generated gets
-   committed.
-3. **No hardcoded base path in the wrapper.** Read it from Webflow's injected
-   `BASE_URL` / `ASSETS_PREFIX`.
-4. **Wrapper files must be inert on GitHub Pages.** Pages ignores
-   `package.json`, `next.config.*`, `webflow.json`, `app/` — verify nothing
-   shadows a real route (e.g. do not add a root `app/page.tsx` that would ever
-   be served by Pages).
-5. **No new dependency the vanilla apps consume.** The wrapper is packaging
-   only; the six child apps keep running as plain HTML/CSS/JS.
+1. **The 145 files do not move.** GitHub Pages serves the repo root; moving
+   them into `public/` breaks Pages the moment the branch merges, ending the
+   dual-host period and pulling Phase 7 forward.
+2. **Generated directories are gitignored** — `webflow/public/`,
+   `webflow/dist/`, `webflow/node_modules/`, `webflow/.astro/`.
+3. **No hardcoded base path.** `base` reads Webflow's injected `BASE_URL`.
+4. **Wrapper files are inert on GitHub Pages.** Pages ignores `package.json`,
+   `astro.config.mjs` and `webflow.json`, and has no directory listing, so
+   `/webflow/` is a 404. Nothing shadows a real route.
+5. **No new dependency the site consumes.** The wrapper is packaging only; the
+   six child apps stay plain HTML/CSS/JS with no build step of their own.
 
-### 16.3 What the wrapper does not fix
+### 16.3 What was built
 
-§4 still applies. `basePath` / `base` rewrites only framework-generated URLs —
-it does not touch hand-written `href="styles.css"` in these files. At a
-slash-less mount root those still resolve against the domain root. Phase 2
-checks; Phase 3 chooses between a `<base href>` sweep and jumping to the
-subdomain (§10), and Phase 3's reasoning is unchanged.
+| File | Purpose |
+|---|---|
+| `webflow/astro.config.mjs` | Collects the tracked site files into `public/` at config load, then `base` from `BASE_URL` |
+| `webflow/package.json` | `astro@^7.3.2` as the only dependency; `build`, `dev`, `test` |
+| `webflow/webflow.json` | Pins `framework: "astro"`. Moved here from the repo root — it belongs at the app root |
+| `webflow/src/pages/health.astro` | Build proof. `/health` renders `ok` only if Astro actually ran |
+| `webflow/check.mjs` | Parity check, `npm test` |
 
-### 16.4 Steps
+**The collector reads from git, not the working directory.** First attempt
+copied the repo root wholesale and swept in 225 untracked local files —
+`.playwright-cli` caches in three child apps, `.claude/memory`, local `docs/`
+and `plans/` directories. GitHub Pages never served any of that, because Pages
+serves the committed tree. `git ls-files` with exclude pathspecs is both the fix
+and the filter, so there is no filter logic to maintain and a new child app
+ships without touching the config.
 
-- [ ] Branch `d13-app` off `main`.
-- [ ] Add the Next.js wrapper: `package.json` deps, `next.config.*` with
-      `output: 'export'` and base path from env, the minimum route Next
-      demands, a build step that collects the root files into the export
-      output, and `.gitignore` entries for the generated directories.
-- [ ] Resolve the root `index.html` collision explicitly — decide whether the
-      repo's file or a Next route owns `/`, and record it here.
-- [ ] Verify `npm run build` locally, then that the output tree matches the
-      repo's own layout (every child app, every asset).
-- [ ] Update `webflow.json` to `"framework": "nextjs"`.
-- [ ] Push the branch. Create the Cloud app against branch `d13-app`, mount
-      `d13-app`.
-- [ ] Read the build log. If creation fails again, the wrapper is not the
-      problem — get the CLI dry-run error before changing anything else.
+`npm test` asserts exact parity: every tracked site file present in `dist/`,
+nothing in `dist/` that git does not track. Current state: **114 files, exact
+parity, clean build.** That check is what catches a leak or a dropped app the
+next time this config is edited.
+
+Note `package.json` is still at the repo root as well. It was added to get past
+the creation-time validation in §15 and is redundant once the app root is
+`webflow/`. Delete it once app creation is confirmed to honor the app path —
+not before, since it is the only thing known to satisfy that check.
+
+### 16.4 What the wrapper does not fix
+
+§4 still applies. Astro's `base` rewrites only Astro-generated URLs — it does
+not touch hand-written `href="styles.css"` in these files. At a slash-less
+mount root those still resolve against the domain root. Phase 2 checks; Phase 3
+chooses between a `<base href>` sweep and jumping to the subdomain (§10), and
+Phase 3's reasoning is unchanged.
+
+### 16.5 Steps
+
+- [x] Branch `d13-app` off `main`.
+- [x] Astro wrapper in `webflow/`, gitignored build artifacts.
+- [x] `npm run build` clean; `npm test` confirms 114-file parity with git.
+- [ ] Push the branch.
+- [ ] Create the Cloud app: repo `nycfirst-d13/nycfirst-d13.github.io`, branch
+      **`d13-app`**, **app root `webflow`**, mount path `d13-app`.
+- [ ] Read the build log. Record the published directory (§3 unknown) — it
+      should be `webflow/dist`.
+- [ ] If creation fails again, the wrapper is not the cause. Get the CLI
+      dry-run error before changing anything else: `webflow auth login`, then
+      `webflow apps init --import <repo-url> --branch d13-app --mount /d13-app
+      --site-id 5d45ab770ae4a12ae3df8293 --skip-clone --dry-run --json`.
+- [ ] Check `/d13-app/health` first — it isolates "did Astro run" from "do the
+      static files resolve".
 - [ ] Run Phase 2 verification (§7) against the deployed branch.
+- [ ] Delete the root `package.json` if the app path made it redundant.
 - [ ] Merge `d13-app` to `main`, repoint the environment to `main`, confirm
       GitHub Pages still serves correctly from the merged tree, delete the
       branch.

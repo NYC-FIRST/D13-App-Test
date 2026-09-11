@@ -11,3 +11,9 @@ node_modules/
 # Claude Code local state
 .claude/
 .DS_Store
+
+# Webflow Cloud wrapper build artifacts (see webflow/)
+webflow/node_modules/
+webflow/public/
+webflow/dist/
+webflow/.astro/
