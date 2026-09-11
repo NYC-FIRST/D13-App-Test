@@ -4,216 +4,335 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Play With D13's Homegrown Apps</title>
-<link rel="stylesheet" href="../styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
-
 /* ------------------------------------------------------------------
-   Present — the PD room page.
-   Front of the classroom sits open on the page. Back of the classroom
-   is a dark panel: the split is spatial, so the design is too.
+   Present — PD room page.
+   Design system lifted from laser-maker/docs/slides-drive-v1.html and
+   drive-cloud-saving.html: paper + dot grid, Geist, 1.5px rules,
+   mono eyebrows, blue-soft tint to mark what matters.
    ------------------------------------------------------------------ */
 :root {
-  --front: #1d4ed8;      /* student blue, from the site palette */
-  --back-bg: #17293d;    /* behind the scenes */
-  --back-ink: #e8f1fb;
-  --back-muted: #93aecb;
-  --amber: #ffb84d;      /* the machines */
+  --paper:       #E8EFF8;
+  --surface:     #FFFFFF;
+  --surface-2:   #EDF2FA;
+  --rule:        #CDDAEE;
+  --rule-2:      #B8CCEA;
+  --ink:         #0F1117;
+  --ink-2:       #3A3D45;
+  --ink-3:       #6B6F7A;
+  --muted:       #9DA1AC;
+  --accent:      #E0241B;
+  --blue:        #2563EB;
+  --blue-soft:   #DCE8FC;
+  --sh-1: 0 1px 2px rgba(15,17,23,.05), 0 1px 4px rgba(15,17,23,.04);
+  --sh-2: 0 2px 8px -2px rgba(15,17,23,.08), 0 1px 2px rgba(15,17,23,.04);
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 }
 
-#present-page {
-  padding: 24px;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  padding: 28px 24px;
 }
-#present-page .room-page { width: 100%; max-width: 1180px; }
+/* the deck's dot grid */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(37,99,235,0.09) 1px, transparent 1px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+.page { position: relative; width: 100%; max-width: 1160px; }
 
-.mono {
-  font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue);
 }
 
 /* --- masthead --- */
-.masthead { text-align: center; margin: 0 0 26px; }
-.masthead .logos {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 0 0 12px;
-}
-.masthead .logos img { height: 52px; }
+.masthead { display: flex; flex-direction: column; justify-content: center; }
+.masthead .logos { display: flex; gap: 10px; margin: 0 0 14px; }
+.masthead .logos img { height: 46px; }
 .masthead h1 {
-  margin: 0;
-  font-size: clamp(26px, 3.4vw, 44px);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  margin: 8px 0 0;
+  font-size: clamp(28px, 3.9vw, 52px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
 }
-.masthead p {
-  margin: 6px 0 0;
-  font-size: clamp(15px, 1.6vw, 20px);
-  color: var(--text-muted);
+.masthead .sub {
+  margin: 12px 0 0;
+  font-size: clamp(14px, 1.6vw, 19px);
+  color: var(--ink-3);
+  max-width: 62ch;
+}
+.masthead .rule {
+  width: 42px;
+  height: 3px;
+  background: var(--accent);
+  margin: 16px 0 0;
 }
 
-/* --- the shared base URL, said once instead of five times --- */
-.base {
-  text-align: center;
+/* --- top zone: hero left, blue rail right (deck slide 1) --- */
+.top {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 22px;
+  align-items: stretch;
   margin: 0 0 22px;
-  font-size: clamp(14px, 1.5vw, 18px);
-  color: var(--text-muted);
 }
-.base b {
-  font-weight: 700;
-  font-size: clamp(19px, 2.3vw, 30px);
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
+
+.rail {
+  position: relative;
+  overflow: hidden;
+  background: var(--blue);
+  border-radius: 14px;
+  padding: 20px 22px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.rail::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+.rail > * { position: relative; }
+.rail .eyebrow { color: rgba(255,255,255,.72); }
+.rail .host {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(15px, 1.55vw, 21px);
+  letter-spacing: -0.02em;
+  color: #fff;
   white-space: nowrap;
 }
+.rail hr { border: 0; border-top: 1.5px solid rgba(255,255,255,.28); }
 
-/* --- the two halves of the room --- */
-.rooms {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-.room {
-  border-radius: 22px;
-  padding: 26px 28px 30px;
-}
-.room h2 {
-  margin: 0;
-  font-size: clamp(19px, 2.1vw, 27px);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-}
-.room .lead { margin: 2px 0 0; font-size: clamp(14px, 1.5vw, 17px); }
-
-.room--front { background: rgba(255, 255, 255, 0.58); }
-.room--front .lead { color: var(--text-muted); }
-
-.room--back { background: var(--back-bg); color: var(--back-ink); }
-.room--back h2 { color: #fff; }
-.room--back .lead { color: var(--back-muted); }
-
-/* --- app links: the slug is the name, so there is no name line --- */
-.apps { list-style: none; margin: 20px 0 0; padding: 0; }
-.apps li + li { margin-top: 16px; }
-.apps a {
+.rail .fb { display: flex; align-items: center; gap: 14px; }
+.rail .fb img {
+  width: 84px;
+  height: 84px;
   display: block;
+  background: #fff;
+  border-radius: 8px;
+  padding: 5px;
+  flex-shrink: 0;
+}
+.rail .fb p { font-size: 13px; color: rgba(255,255,255,.78); margin-top: 3px; }
+.rail .short {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: #fff;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(14px, 1.5vw, 19px);
+  color: var(--blue);
   text-decoration: none;
-  border-radius: 10px;
-  outline-offset: 4px;
 }
-.apps .slug {
+.rail .short:hover { text-decoration: underline; text-underline-offset: 3px; }
+.rail a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+
+/* --- two halves of the room --- */
+.rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
+.room { display: flex; flex-direction: column; }
+.room > .eyebrow { display: block; }
+.room .lead {
+  margin: 5px 0 14px;
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: var(--ink-3);
+}
+
+.apps { list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.apps li { display: flex; flex: 1; }
+.apps a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1.5px solid var(--rule);
+  border-radius: 10px;
+  box-shadow: var(--sh-1);
+  text-decoration: none;
+  color: inherit;
+}
+.apps a:hover { box-shadow: var(--sh-2); border-color: var(--rule-2); }
+.apps a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
+
+/* front of the room is the tinted group, the way the deck tints what matters */
+.room--front .apps a { background: var(--blue-soft); border-color: #B8CCEA; }
+.room--front .name { color: var(--blue); }
+
+.apps .name {
   display: block;
-  font-size: clamp(22px, 2.6vw, 34px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-size: clamp(15px, 1.6vw, 19px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 .apps .what {
   display: block;
-  margin-top: 1px;
-  font-size: clamp(13px, 1.4vw, 16px);
+  margin: 2px 0 10px;
+  font-size: clamp(12px, 1.3vw, 15px);
+  color: var(--ink-3);
 }
-.room--front .slug { color: var(--front); }
-.room--front .what { color: var(--text-muted); }
-.room--back .slug { color: var(--amber); }
-.room--back .what { color: var(--back-muted); }
-.apps a:hover .slug,
-.apps a:focus-visible .slug { text-decoration: underline; text-underline-offset: 4px; }
+.apps .slug {
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(15px, 1.8vw, 23px);
+  letter-spacing: -0.01em;
+  color: var(--ink-2);
+}
+.room--front .apps .slug { background: rgba(255,255,255,.75); color: var(--blue); }
+.apps a:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
 
 /* --- feedback --- */
 .feedback {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 22px;
-  margin: 26px 0 0;
-  text-align: left;
-}
-.feedback img {
-  width: 112px;
-  height: 112px;
+  gap: 18px;
+  margin: 22px 0 0;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1.5px solid var(--rule);
   border-radius: 10px;
-  background: #fff;
-  padding: 6px;
+  box-shadow: var(--sh-1);
 }
-.feedback h2 { margin: 0; font-size: clamp(16px, 1.8vw, 21px); font-weight: 800; }
-.feedback p { margin: 1px 0 4px; font-size: clamp(13px, 1.4vw, 16px); color: var(--text-muted); }
+.feedback img { width: 92px; height: 92px; display: block; }
+.feedback .copy { flex: 1; }
+.feedback h2 {
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 4px 0 2px;
+}
+.feedback p { font-size: clamp(12px, 1.3vw, 15px); color: var(--ink-3); }
 .feedback .short {
-  font-size: clamp(18px, 2.1vw, 27px);
-  font-weight: 700;
-  color: var(--front);
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  background: var(--blue-soft);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(15px, 1.8vw, 23px);
+  color: var(--blue);
   text-decoration: none;
 }
-.feedback .short:hover { text-decoration: underline; text-underline-offset: 4px; }
+.feedback .short:hover { text-decoration: underline; text-underline-offset: 3px; }
+.feedback .short:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-/* --- one column on a phone; the room metaphor still reads top-to-bottom --- */
 @media (max-width: 760px) {
   .rooms { grid-template-columns: 1fr; }
-  .feedback { flex-direction: column; text-align: center; }
+  .top { grid-template-columns: 1fr; }
 }
 </style>
 </head>
-<body id="present-page">
-  <div class="room-page">
+<body>
+  <div class="page">
 
+    <div class="top">
     <header class="masthead">
       <div class="logos" aria-hidden="true">
         <img src="../nyfc-d13_decal-logo.png" alt="">
         <img src="../d13_logo.png" alt="">
       </div>
+      <p class="eyebrow">NYC FIRST District 13 &middot; STEM Center</p>
       <h1>Play With D13&rsquo;s Homegrown Apps</h1>
-      <p>Purpose-built tools for STEM classrooms</p>
+      <p class="sub">Purpose-built tools for STEM classrooms. Five of them, live right now, nothing to install.</p>
+      <div class="rule"></div>
     </header>
 
-    <p class="base">Everything starts with <b class="mono">nycfirst-d13.github.io/</b></p>
+      <aside class="rail">
+        <div>
+          <p class="eyebrow">Every link starts here</p>
+          <span class="host">nycfirst-d13.github.io/</span>
+        </div>
+        <hr>
+        <div class="fb">
+          <img src="feedback-qr.svg" alt="QR code to the feedback form">
+          <div>
+            <p class="eyebrow">Feedback</p>
+            <p>Something broke? Bugs, wishes, half-formed ideas.</p>
+            <a class="short" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
+          </div>
+        </div>
+      </aside>
+    </div>
 
     <div class="rooms">
 
       <section class="room room--front">
-        <h2>Front of the classroom</h2>
+        <p class="eyebrow">Front of the classroom</p>
         <p class="lead">Students drive these. Hand out the link and get out of the way.</p>
         <ul class="apps">
           <li><a href="https://nycfirst-d13.github.io/laser-maker">
-            <span class="slug mono">/laser-maker</span>
+            <span class="name">Laser Maker</span>
             <span class="what">Design vector files for the laser cutter</span>
+            <span class="slug">/laser-maker</span>
           </a></li>
           <li><a href="https://nycfirst-d13.github.io/stem-stations">
-            <span class="slug mono">/stem-stations</span>
+            <span class="name">STEM Stations</span>
             <span class="what">STEM activities for kids</span>
+            <span class="slug">/stem-stations</span>
           </a></li>
           <li><a href="https://nycfirst-d13.github.io/arcade">
-            <span class="slug mono">/arcade</span>
+            <span class="name">D13 Arcade</span>
             <span class="what">Play student-made MakeCode games</span>
+            <span class="slug">/arcade</span>
           </a></li>
         </ul>
       </section>
 
       <section class="room room--back">
-        <h2>Back of the classroom</h2>
+        <p class="eyebrow">Back of the classroom</p>
         <p class="lead">You drive these. Prep and cleanup the room never sees.</p>
         <ul class="apps">
           <li><a href="https://nycfirst-d13.github.io/bed-maker">
-            <span class="slug mono">/bed-maker</span>
+            <span class="name">Bed Maker</span>
             <span class="what">Pack a day&rsquo;s laser files onto one 36&times;24 bed</span>
+            <span class="slug">/bed-maker</span>
           </a></li>
           <li><a href="https://nycfirst-d13.github.io/bird-bingo">
-            <span class="slug mono">/bird-bingo</span>
+            <span class="name">Bird Bingo</span>
             <span class="what">Generate 30 printable bingo boards at once</span>
+            <span class="slug">/bird-bingo</span>
           </a></li>
         </ul>
       </section>
 
     </div>
 
-    <div class="feedback">
-      <img src="feedback-qr.svg" alt="QR code to the feedback form">
-      <div>
-        <h2>Something broke? Tell us.</h2>
-        <p>Bugs, wishes, half-formed ideas &mdash; all welcome.</p>
-        <a class="short mono" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
-      </div>
-    </div>
 
   </div>
 </body>

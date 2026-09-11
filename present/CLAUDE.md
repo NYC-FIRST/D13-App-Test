@@ -6,33 +6,44 @@ the room to type by hand, and a feedback form URL + QR.
 
 ## Stack
 
-Single `index.html`. No build step, no JS. Inherits the site theme from `../styles.css`
-(Inter, blue gradient, `--primary-dark` etc.); page-specific rules live in an inline
-`<style>` scoped to `#present-page`.
+Single `index.html`. No build step, no JS. **Self-contained — it deliberately does not load
+`../styles.css`**; that sheet's Inter + blue gradient fights the look below.
 
 | File | Role |
 |------|------|
 | `index.html` | The whole page |
 | `feedback-qr.svg` | QR for the feedback short URL. Generated, not hand-edited — see below |
 
+## Design system
+
+Lifted wholesale from `../laser-maker/docs/slides-drive-v1.html` and
+`../laser-maker/docs/drive-cloud-saving.html`. **Do not invent colours for this page** — if
+something needs a new value, take it from those two files.
+
+- Paper `#E8EFF8` under a blue dot grid (`rgba(37,99,235,.09)` 1px dots at `34px`).
+- Type: **Geist** (300-700) and **Geist Mono** (400-600), Google Fonts. Mono is for URLs and
+  eyebrows only.
+- Rules are **1.5px** `#CDDAEE`, never 1px. Radii 6/8/10/14px — small, never pills.
+- Ink `#0F1117` / `#3A3D45` / `#6B6F7A`, blue `#2563EB`, blue-soft `#DCE8FC`,
+  red accent `#E0241B` (the short rule under the hero).
+- Mono uppercase letter-spaced blue eyebrows above each block — that's the house style here,
+  not a generic label.
+
 ## Rules
 
-- **The split is spatial, so the design is.** *Front of the classroom* sits open and light on
-  the page gradient; *back of the classroom* is a solid dark panel (`--back-bg`) — literally
-  behind the scenes. That contrast is the whole idea; don't flatten the two into matching cards.
-  Front = student blue (`--front`), back = workshop amber (`--amber`). Cool is kids, warm is machines.
-- **The base URL is said once.** `nycfirst-d13.github.io/` lives in the `.base` line above the
-  columns, so each app row is only its slug. Never reintroduce the full host per row — repeating
-  it five times is what made the earlier version feel cluttered.
-- **The slug is the app's name.** No separate name line: `/bed-maker` plus one plain sentence
-  about what it does. Two lines per app, no more.
+- **Layout follows deck slide 1:** hero left, solid blue rail right. The rail carries the two
+  things a room needs — the base URL and the feedback QR — and wears the white-dot grid.
+- **The base URL is said once**, in the rail. Each app row is only its slug. Never reintroduce
+  the full host per row; repeating it five times is what made an earlier version feel cluttered.
+- **Front of the classroom is the tinted group** (`blue-soft` cards, blue names), back is plain
+  white — the same way the deck tints the card that matters. That tint is the front/back
+  division; don't add a second device on top of it.
 - Sections: front = `laser-maker`, `stem-stations`, `arcade` (students open these themselves);
   back = `bed-maker`, `bird-bingo` (teacher utilities). `hello-waves` and
   `card-prompt-builder.html` are deliberately absent.
+- Columns stretch to equal height, so the shorter back column's cards grow to fill.
 - **It has to fit one screen at 1440x900** — no scrolling on a projector, and the QR must never
   be below the fold. Adding a row means taking the height back out of the spacing.
-- Type: Inter (from `../styles.css`) for prose, JetBrains Mono for URLs only. The mono is
-  functional, not decorative — a room full of people typing needs unambiguous `l`, `1`, `0`.
 
 ## Regenerating the QR
 
