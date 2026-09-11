@@ -45,10 +45,12 @@ something needs a new value, take it from those two files.
   `.rooms` is `minmax(0, 1fr) 380px`; it goes single-column at **900px**, not 760 — below that the
   fixed right column squeezes the left one until the full URLs overflow their chips.
 - **Feedback is not a card** — no fill, border or shadow. Blue type and a bare QR, centre-aligned
-  and `align-self: center` so it floats level with the middle of the app stack.
+  and `align-self: center` so it floats level with the middle of the app stack. It is sized for a
+  room, not a desk: QR up to 260px, short URL at 31px. Its block height (~404px) is deliberately
+  just under the app stack's (~417px) — grow it further and it starts driving the page past one screen.
 - **The QR is transparent with blue modules, and it must keep `border=4`.** That is the quiet
   zone; without it the code does not reliably scan. The dot grid showing through is fine —
-  verified by decoding the rendered pixels at both 180px and 120px. **Re-verify after any change
+  verified by decoding the rendered pixels at both 260px and 150px. **Re-verify after any change
   to the QR's colour, size or background** (see below).
 - **Spacing is a 4px scale: 4 / 12 / 16 / 24 / 32.** Inside a card 4 (name to description)
   and 12 (description to URL); between cards 12. Group separation always reads as double the
