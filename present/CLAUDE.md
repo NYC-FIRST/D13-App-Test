@@ -44,7 +44,13 @@ something needs a new value, take it from those two files.
   `card-prompt-builder.html` are deliberately absent.
 - **The feedback card is the last row of the back column**, and the whole card is one link to the
   form. It keeps the solid `--blue` so it reads as not-an-app despite sitting in that column.
-  Its QR is sized to hold the card at the same height as the app cards (all six are 134-136px).
+- **The feedback card's height must come from its text, never from its QR.** It carries the same
+  `name` / `what` / `slug` stack as every app card, and the QR is `position: absolute` pinned
+  `top/right/bottom` with `aspect-ratio: 1`, so it sizes itself from the card rather than setting
+  it. Card heights are `clamp()`-driven and scale with viewport width; a fixed-px QR matches at
+  exactly one window size and drifts everywhere else (it was 32px too tall at 800px wide).
+  `.copy` must stay `display: block` — it is a `<span>`, and its `padding-right` that keeps text
+  clear of the QR does nothing while it is inline.
 - **Spacing is a 4px scale: 4 / 12 / 16 / 24 / 32.** Inside a card 4 (name to description)
   and 12 (description to URL); between cards 12; heading to its first card 24, so group
   separation always reads as double the item separation. No off-scale one-off values.

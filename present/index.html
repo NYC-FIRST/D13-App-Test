@@ -191,13 +191,13 @@ body::before {
 .feedback .short:hover { text-decoration: underline; text-underline-offset: 3px; }
 .feedback .short:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-/* feedback lives in the back column but keeps the blue, so it is clearly not an app */
+/* Feedback lives in the back column but keeps the blue, so it is clearly not an app.
+   It carries the same name/what/slug stack as every app card, and the QR is taken out of
+   flow entirely — so this card's height is identical to an app card's at every viewport,
+   instead of being pinned to whatever the QR happens to measure. */
 .apps .fb {
   position: relative;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  gap: 16px;
   background: var(--blue);
   border-color: var(--blue);
 }
@@ -210,9 +210,19 @@ body::before {
   pointer-events: none;
 }
 .apps .fb > * { position: relative; }
-.apps .fb img { width: 102px; height: 102px; display: block; background: #fff; border-radius: 6px; padding: 5px; flex-shrink: 0; }
-.apps .fb .eyebrow { color: rgba(255,255,255,.72); }
-.apps .fb .name { color: #fff; margin-top: 4px; }
+.apps .fb .copy { display: block; padding-right: 124px; }
+.apps .fb .qr {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  bottom: 16px;
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 6px;
+  padding: 5px;
+}
+.apps .fb .qr img { display: block; width: 100%; height: 100%; }
+.apps .fb .name { color: #fff; }
 .apps .fb .what { color: rgba(255,255,255,.78); }
 .apps .fb .slug { background: #fff; color: var(--blue); }
 
@@ -274,10 +284,10 @@ body::before {
             <span class="slug">/bird-bingo</span>
           </a></li>
           <li><a class="fb" href="https://t.ly/u1CYu">
-            <img src="feedback-qr.svg" alt="">
-            <span>
-              <span class="eyebrow">Feedback</span>
+            <span class="qr"><img src="feedback-qr.svg" alt=""></span>
+            <span class="copy">
               <span class="name">Something broke? Tell us.</span>
+              <span class="what">Bugs, wishes, half-formed ideas.</span>
               <span class="slug">t.ly/u1CYu</span>
             </span>
           </a></li>
