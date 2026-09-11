@@ -102,14 +102,8 @@ body::before {
   margin: 20px 0 0;
 }
 
-/* --- two halves of the room --- */
-.rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
-.room > .eyebrow { display: block; }
-.room .lead {
-  margin: 4px 0 24px;
-  font-size: clamp(13px, 1.4vw, 16px);
-  color: var(--ink-3);
-}
+/* --- app list, with feedback floated alongside --- */
+.rooms { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
 
 .apps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 .apps a {
@@ -125,9 +119,9 @@ body::before {
 .apps a:hover { box-shadow: var(--sh-2); border-color: var(--rule-2); }
 .apps a:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-/* front of the room is the tinted group, the way the deck tints what matters */
-.room--front .apps a { background: var(--blue-soft); border-color: #B8CCEA; }
-.room--front .name { color: var(--blue); }
+/* the apps are the tinted group, the way the deck tints what matters */
+.apps--front a { background: var(--blue-soft); border-color: #B8CCEA; }
+.apps--front .name { color: var(--blue); }
 
 .apps .name {
   display: block;
@@ -152,7 +146,7 @@ body::before {
   letter-spacing: -0.01em;
   color: var(--ink-2);
 }
-.room--front .apps .slug { background: rgba(255,255,255,.75); color: var(--blue); }
+.apps--front .slug { background: rgba(255,255,255,.75); color: var(--blue); }
 .apps a:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
 
 /* --- feedback --- */
@@ -249,53 +243,36 @@ body::before {
 
     <div class="rooms">
 
-      <section class="room room--front">
-        <p class="eyebrow">Front of the classroom</p>
-        <ul class="apps">
-          <li><a href="https://nycfirst-d13.github.io/laser-maker">
-            <span class="name">Laser Maker</span>
-            <span class="what">Design vector files for the laser cutter</span>
-            <span class="slug">/laser-maker</span>
-          </a></li>
-          <li><a href="https://nycfirst-d13.github.io/stem-stations">
-            <span class="name">STEM Stations</span>
-            <span class="what">STEM activities for kids</span>
-            <span class="slug">/stem-stations</span>
-          </a></li>
-          <li><a href="https://nycfirst-d13.github.io/arcade">
-            <span class="name">D13 Arcade</span>
-            <span class="what">Play student-made MakeCode games</span>
-            <span class="slug">/arcade</span>
-          </a></li>
-        </ul>
-      </section>
+      <ul class="apps apps--front">
+        <li><a href="https://nycfirst-d13.github.io/laser-maker">
+          <span class="name">Laser Maker</span>
+          <span class="what">Design vector files for the laser cutter</span>
+          <span class="slug">/laser-maker</span>
+        </a></li>
+        <li><a href="https://nycfirst-d13.github.io/stem-stations">
+          <span class="name">STEM Stations</span>
+          <span class="what">STEM activities for kids</span>
+          <span class="slug">/stem-stations</span>
+        </a></li>
+        <li><a href="https://nycfirst-d13.github.io/arcade">
+          <span class="name">D13 Arcade</span>
+          <span class="what">Play student-made MakeCode games</span>
+          <span class="slug">/arcade</span>
+        </a></li>
+      </ul>
 
-      <section class="room room--back">
-        <p class="eyebrow">Back of the classroom</p>
-        <ul class="apps">
-          <li><a href="https://nycfirst-d13.github.io/bed-maker">
-            <span class="name">Bed Maker</span>
-            <span class="what">Pack a day&rsquo;s laser files onto one 36&times;24 bed</span>
-            <span class="slug">/bed-maker</span>
-          </a></li>
-          <li><a href="https://nycfirst-d13.github.io/bird-bingo">
-            <span class="name">Bird Bingo</span>
-            <span class="what">Generate 30 printable bingo boards at once</span>
-            <span class="slug">/bird-bingo</span>
-          </a></li>
-          <li><a class="fb" href="https://t.ly/u1CYu">
-            <span class="qr"><img src="feedback-qr.svg" alt=""></span>
-            <span class="copy">
-              <span class="name">Share feedback</span>
-              <span class="what">Bugs, wishes, half-formed ideas.</span>
-              <span class="slug">t.ly/u1CYu</span>
-            </span>
-          </a></li>
-        </ul>
-      </section>
+      <ul class="apps">
+        <li><a class="fb" href="https://t.ly/u1CYu">
+          <span class="qr"><img src="feedback-qr.svg" alt=""></span>
+          <span class="copy">
+            <span class="name">Share feedback</span>
+            <span class="what">Bugs, wishes, half-formed ideas.</span>
+            <span class="slug">t.ly/u1CYu</span>
+          </span>
+        </a></li>
+      </ul>
 
     </div>
-
 
   </div>
 </body>

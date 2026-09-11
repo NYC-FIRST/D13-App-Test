@@ -35,15 +35,13 @@ something needs a new value, take it from those two files.
   is said exactly once. Each app row is only its slug — never reintroduce the full host per row.
   Nothing labels or explains the host; it speaks for itself.
 - **The h1 stays on one line at full width.** If the copy grows, shrink the clamp, don't let it wrap.
-- Section headings are the eyebrow alone. No explanatory line underneath.
-- **Front of the classroom is the tinted group** (`blue-soft` cards, blue names), back is plain
-  white — the same way the deck tints the card that matters. That tint is the front/back
-  division; don't add a second device on top of it.
-- Sections: front = `laser-maker`, `stem-stations`, `arcade` (students open these themselves);
-  back = `bed-maker`, `bird-bingo` (teacher utilities). `hello-waves` and
-  `card-prompt-builder.html` are deliberately absent.
-- **The feedback card is the last row of the back column**, and the whole card is one link to the
-  form. It keeps the solid `--blue` so it reads as not-an-app despite sitting in that column.
+- **No section headings.** The app list carries no title; the cards speak for themselves.
+- App cards are the `blue-soft` tinted group, the way the deck tints the cards that matter.
+- Three apps only: `laser-maker`, `stem-stations`, `arcade`. `bed-maker`, `bird-bingo`,
+  `hello-waves` and `card-prompt-builder.html` are deliberately absent — the front/back-of-
+  classroom split was tried and dropped.
+- **The feedback card floats to the right of the app list** (`.rooms` is `1fr 380px`,
+  `align-items: start`), and the whole card is one link to the form. It keeps the solid `--blue` so it never reads as another app.
 - **The feedback card's height must come from its text, never from its QR.** It carries the same
   `name` / `what` / `slug` stack as every app card, and the QR is `position: absolute` pinned
   `top/right/bottom` with `aspect-ratio: 1`, so it sizes itself from the card rather than setting
