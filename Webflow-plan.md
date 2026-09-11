@@ -624,3 +624,86 @@ subdomain (§10), and Phase 3's reasoning is unchanged.
 - [ ] Merge `d13-app` to `main`, repoint the environment to `main`, confirm
       GitHub Pages still serves correctly from the merged tree, delete the
       branch.
+
+---
+
+## 17. Phase 1c — path migration to the Cloudflare convention (2026-09-11)
+
+Done in the `NYC-FIRST/D13-App-Test` test repo, on `main`. The live
+`nycfirst-d13.github.io` repo is untouched (it is `upstream` here), so the
+dual-host argument in §16.2 does not apply to this work.
+
+### 17.1 Correction to §4
+
+§4 says the base-URL problem "disappears entirely" at the root of a subdomain.
+That is wrong, and the plan should not rely on it. It disappears only for the
+*root page*. At `d13.nycfirst.org/arcade` a bare `src="app.js"` still resolves
+to `/app.js`, because the platform strips the trailing slash there too. The
+subdomain shrinks the problem to the child apps; it does not remove it.
+
+The conventions are inverted, which is the whole issue:
+
+| Request | GitHub Pages | Webflow Cloud |
+|---|---|---|
+| `/arcade` | 301 → `/arcade/` (adds slash) | serves `arcade/index.html` |
+| `/arcade/` | serves index | 301 → `/arcade` (strips slash) |
+
+### 17.2 What was changed
+
+A `<base href>` stamped into the `<head>` of all 14 HTML pages. One line per
+page fixes every relative `href`, `src`, CSS `url()` and `fetch()` at once, and
+the ES-module graphs follow for free because module specifiers resolve against
+the importing module's URL, not the document's.
+
+`hello-waves/micro.html` is skipped — it is a fragment with no `<head>` and no
+relative references.
+
+Not hand-edited. `tools/set-base.sh <mount>` derives each page's base from its
+own directory and is idempotent, so §4's objection about hardcoding the mount
+path and editing every file twice no longer applies:
+
+```
+tools/set-base.sh /d13-app    # current
+tools/set-base.sh /           # if Phase 5 moves to a subdomain root
+```
+
+### 17.3 Verification
+
+- `tools/check-links.py` — resolves all 54 references the way a browser would
+  under the strip-slash convention. All resolve to real files.
+- `tools/serve-like-webflow.py` — serves the repo locally with Cloudflare
+  `auto-trailing-slash` semantics plus the mount prefix. Every app root, asset,
+  module and CSV returns 200; `.html` URLs 301 once to their extensionless form
+  with no loop.
+- Browser check: Laser Maker loads all 30 ES modules, its assets and
+  `assets/sounds/pop.ogg` (via `import.meta.url`) with zero console errors.
+
+### 17.4 Resolved and still-open
+
+**Resolved.** `.html` links (`card-prompt-builder.html`, `submit.html`,
+`games.html?id=…`) 301 to the extensionless path and keep the query string.
+One redirect per click, no loop, no code change needed.
+
+**Open — `static` is still unconfirmed.** Webflow's own docs assistant,
+queried 2026-09-11, independently confirms §16: the documented `framework`
+values are `nextjs` and `astro` only, with no mention of `static` as supported
+*or* reserved, no documented publish directory for a static app, and no
+`publishDirectory` key. It also documents a `cloud.app_id` field as **required**
+(normally written by `webflow cloud deploy`), which the current `webflow.json`
+does not carry — a candidate for the §15.4 silent form-revert worth testing.
+
+All of §17.2 is framework-independent. If `static` is rejected again and an
+Astro or Next wrapper becomes necessary, none of this work is wasted — a
+wrapper's `basePath` only rewrites framework-generated URLs, never the
+hand-written relative refs in these files (§16.3).
+
+### 17.5 Not done, deliberately
+
+- **`present/index.html` absolute URLs left alone.** Six hardcoded
+  `nycfirst-d13.github.io/…` links. That page is the projector deck for today's
+  staff PD and those URLs are being read off a screen by attendees; they are
+  correct for that use. Revisit after the PD, not during it.
+- **No `public/` build step added.** "Static" means the repo root is the
+  published directory. Adding a copy-into-`public/` build to a static app is
+  speculative machinery — if the first deploy log says it wants `public/`, it
+  is a five-minute addition.
