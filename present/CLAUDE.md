@@ -17,9 +17,9 @@ Single `index.html`. No build step, no JS. Inherits the site theme from `../styl
 
 ## Rules
 
-- **URLs are the content.** They are displayed for people typing them, so they never wrap
-  mid-word: the host sits on its own line (`.host`) and the path stays `white-space: nowrap`.
-  Adding an app means keeping that intact — check the longest slug still fits its card.
+- **URLs are the content.** Flat vertical stack, one app per row, rule between rows — no
+  cards, no columns. The URL is the largest thing on the row; host is muted (`.host`), path
+  is bold. Adding an app means checking the longest URL still sits on one line at 1440px.
 - Apps listed are a curated subset for the session, not every child directory.
   Currently: `laser-maker`, `stem-stations`, `arcade`.
 

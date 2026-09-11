@@ -29,39 +29,29 @@
     list-style: none;
     margin: 0 0 36px;
     padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
   }
-  .app-row li { flex: 1 1 260px; }
   .app-row a {
     display: block;
-    background: var(--surface-light);
-    border: 2px solid var(--border-light);
-    border-radius: 18px;
-    padding: 22px 18px;
+    padding: 18px 4px;
+    border-top: 1px solid var(--border-light);
     text-decoration: none;
     color: var(--text-primary);
-    text-align: center;
   }
-  .app-row a:hover { background: var(--surface-hover); }
-  .app-row .name { display: block; font-weight: 800; font-size: clamp(18px, 2vw, 24px); }
-  .app-row .blurb { display: block; color: var(--text-muted); font-size: 14px; margin: 4px 0 12px; }
+  .app-row li:last-child a { border-bottom: 1px solid var(--border-light); }
+  .app-row a:hover .url { text-decoration: underline; }
+
+  .app-row .name { font-weight: 800; font-size: clamp(17px, 1.7vw, 21px); }
+  .app-row .blurb { color: var(--text-muted); font-size: clamp(14px, 1.4vw, 17px); }
+  .app-row .blurb::before { content: " — "; }
   .app-row .url {
     display: block;
+    margin-top: 2px;
     font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    font-size: clamp(17px, 1.8vw, 22px);
+    font-size: clamp(20px, 2.6vw, 34px);
     font-weight: 700;
-    white-space: nowrap;
     color: var(--primary-dark);
   }
-  /* host on its own line so the path never wraps mid-word on a projector */
-  .app-row .host {
-    display: block;
-    font-size: 0.72em;
-    font-weight: 500;
-    color: var(--text-muted);
-  }
+  .app-row .host { font-weight: 500; color: var(--text-muted); }
 
   .feedback {
     display: flex;
