@@ -21,7 +21,7 @@ branch (§16).
 
 | Thing | Value |
 |---|---|
-| Repo | `nycfirst-d13/nycfirst-d13.github.io` |
+| Repo | `nycfirst-d13/nycfirst-d13.github.io` — owner is a **user** account, not an org |
 | Local root | `/Users/avigoldman/nycfirst-d13.github.io` |
 | Host today | GitHub Pages, repo root = site root, `.nojekyll`, no workflows, no CNAME |
 | Host during migration | Both, independently. No redirect either direction. |
@@ -143,10 +143,13 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
 
 ## 5. Phase 0 — pre-flight
 
-- [x] **Admin/owner rights confirmed.** Repo owner on `nycfirst-d13`, cleared
-      with the Webflow admin. The existing Cloud app lives under the separate
-      `NYC-FIRST` org, so expect a second, separate GitHub App install prompt
-      scoped to `nycfirst-d13`.
+- [x] **Admin/owner rights confirmed.** `nycfirst-d13` is a personal **user
+      account** (not an org), with admin on the repo. Cleared with the Webflow
+      admin. The existing Cloud app lives under the separate `NYC-FIRST` org,
+      so expect a second, separate GitHub App install scoped to the
+      `nycfirst-d13` user. Its install page is
+      `github.com/settings/installations` — the `/organizations/...` path
+      returns 404 for a user account.
 - [x] Confirm the Webflow site plan permits an additional Cloud app.
 - [x] Start an inventory of where `nycfirst-d13.github.io` URLs have been
       shared — student handouts, Google Classroom, slide decks, QR codes,
@@ -178,7 +181,7 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
       (not yet connected).
 - [ ] **New app** → import `nycfirst-d13/nycfirst-d13.github.io`. If the repo
       doesn't appear in the picker, paste the full repo URL directly.
-- [ ] Approve the GitHub App install for the `nycfirst-d13` org.
+- [ ] Approve the GitHub App install for the `nycfirst-d13` user account.
 - [ ] Branch: `main`. App root: blank. Mount path: **`d13-app`**.
 - [ ] Deploy. Read the build log and record which directory was published
       (resolves an unknown from §3).
@@ -662,3 +665,35 @@ Phase 3's reasoning is unchanged.
 - [ ] Merge `d13-app` to `main`, repoint the environment to `main`, confirm
       GitHub Pages still serves correctly from the merged tree, delete the
       branch.
+
+### 16.6 Still failing silently after the wrapper (2026-09-11)
+
+With `framework: "astro"` (documented and supported), a single `package.json`
+at `webflow/`, and the app root set to `webflow`, app creation **still** reverts
+to the form with no message. The repo shape is therefore not the cause — three
+different repo shapes and three mount paths have now produced the identical
+silent failure.
+
+Evidence that narrows it to the GitHub connection or the site's entitlement:
+
+- **The repo has no webhooks.** `gh api repos/…/hooks` returns empty. A
+  successful Cloud connect installs a webhook to deploy on push, so the
+  connection has never completed — the failure is upstream of anything in the
+  repo.
+- Installed-app listing is not reachable by API from here: `/user/installations`
+  needs an App-authorized token, `/orgs/…/installations` needs `admin:org`, and
+  the account is a user anyway.
+
+Remaining candidates, in order: the Webflow GitHub App is not installed against
+this repo; the site's plan does not include another Cloud app; or a Webflow-side
+bug. Check `github.com/settings/installations` for the first.
+
+**The UI is not an instrument.** Four attempts, zero diagnostic output. The CLI
+prints the real error and is installed locally (`2.8.0-next.2`, login pending):
+
+    webflow auth login
+    webflow apps init --import https://github.com/nycfirst-d13/nycfirst-d13.github.io \
+      --branch d13-app --mount /d13-app --site-id 5d45ab770ae4a12ae3df8293 \
+      --skip-clone --dry-run --json
+
+`--dry-run` creates nothing; `--skip-clone` writes nothing to disk.
