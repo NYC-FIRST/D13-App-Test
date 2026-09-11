@@ -20,8 +20,14 @@ Single `index.html`. No build step, no JS. Inherits the site theme from `../styl
 - **URLs are the content.** Flat vertical stack, one app per row, rule between rows — no
   cards, no columns. The URL is the largest thing on the row; host is muted (`.host`), path
   is bold. Adding an app means checking the longest URL still sits on one line at 1440px.
-- Apps listed are a curated subset for the session, not every child directory.
-  Currently: `laser-maker`, `stem-stations`, `arcade`.
+- **Two sections, and the split is the point.** *Front of the classroom* = apps students
+  open themselves (`laser-maker`, `stem-stations`, `arcade`). *Back of the classroom* =
+  teacher utilities students never see (`bed-maker`, `bird-bingo`). The distinction is
+  spelled out in a `.note` under each heading — keep it there, it's the takeaway.
+- A curated subset, not every child directory. `hello-waves` and `card-prompt-builder.html`
+  are deliberately absent.
+- **It has to fit one screen at 1440×900** — no scrolling on a projector, and the QR must
+  never be below the fold. Adding a row means taking the height back out of the spacing.
 
 ## Regenerating the QR
 

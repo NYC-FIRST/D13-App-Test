@@ -7,11 +7,11 @@
 <link rel="stylesheet" href="../styles.css">
 <style>
   /* present page — projector-first: big type, one screen, no scroll */
-  #present-page { padding: 32px 24px; }
+  #present-page { padding: 12px 24px; }
   #present-page .wrap { max-width: 1100px; }
 
-  #present-page .card-header { justify-content: center; text-align: center; margin: 0 0 28px; }
-  #present-page .card-logos img { height: 56px; }
+  #present-page .card-header { justify-content: center; text-align: center; margin: 0 0 18px; }
+  #present-page .card-logos img { height: 48px; }
   #present-page h1 {
     margin: 0;
     font-size: clamp(22px, 3.2vw, 38px);
@@ -25,14 +25,32 @@
     margin-top: 6px;
   }
 
+  .section { margin: 0 0 12px; }
+  .section + .section { margin-top: 16px; }
+  .section h2 {
+    font-size: clamp(15px, 1.5vw, 19px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    margin: 0 0 2px;
+  }
+  .section .note {
+    display: block;
+    font-size: clamp(13px, 1.3vw, 16px);
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
   .app-row {
     list-style: none;
-    margin: 0 0 36px;
+    margin: 6px 0 0;
     padding: 0;
   }
   .app-row a {
     display: block;
-    padding: 18px 4px;
+    padding: 11px 4px;
     border-top: 1px solid var(--border-light);
     text-decoration: none;
     color: var(--text-primary);
@@ -47,7 +65,7 @@
     display: block;
     margin-top: 2px;
     font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    font-size: clamp(20px, 2.6vw, 34px);
+    font-size: clamp(19px, 2.1vw, 28px);
     font-weight: 700;
     color: var(--primary-dark);
   }
@@ -61,9 +79,9 @@
     flex-wrap: wrap;
     background: var(--surface-faint);
     border-radius: 18px;
-    padding: 24px;
+    padding: 16px 24px;
   }
-  .feedback img { width: 180px; height: 180px; }
+  .feedback img { width: 136px; height: 136px; }
   .feedback h2 { font-size: clamp(18px, 2vw, 26px); }
   .feedback .url {
     display: inline-block;
@@ -92,29 +110,51 @@
         </h1>
       </div>
 
-      <ul class="app-row">
-        <li>
-          <a href="https://nycfirst-d13.github.io/laser-maker">
-            <span class="name">Laser Maker</span>
-            <span class="blurb">Design vector files for the laser cutter</span>
-            <span class="url"><span class="host">nycfirst-d13.github.io/</span>laser-maker</span>
-          </a>
-        </li>
-        <li>
-          <a href="https://nycfirst-d13.github.io/stem-stations">
-            <span class="name">STEM Stations</span>
-            <span class="blurb">STEM activities for kids</span>
-            <span class="url"><span class="host">nycfirst-d13.github.io/</span>stem-stations</span>
-          </a>
-        </li>
-        <li>
-          <a href="https://nycfirst-d13.github.io/arcade">
-            <span class="name">D13 Arcade</span>
-            <span class="blurb">Play student-made MakeCode games</span>
-            <span class="url"><span class="host">nycfirst-d13.github.io/</span>arcade</span>
-          </a>
-        </li>
-      </ul>
+      <div class="section">
+        <h2>Front of the classroom
+          <span class="note">Students open these themselves — hand out the URL and go.</span>
+        </h2>
+        <ul class="app-row">
+          <li>
+            <a href="https://nycfirst-d13.github.io/laser-maker">
+              <span class="name">Laser Maker</span><span class="blurb">Design vector files for the laser cutter</span>
+              <span class="url"><span class="host">nycfirst-d13.github.io/</span>laser-maker</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://nycfirst-d13.github.io/stem-stations">
+              <span class="name">STEM Stations</span><span class="blurb">STEM activities for kids</span>
+              <span class="url"><span class="host">nycfirst-d13.github.io/</span>stem-stations</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://nycfirst-d13.github.io/arcade">
+              <span class="name">D13 Arcade</span><span class="blurb">Play student-made MakeCode games</span>
+              <span class="url"><span class="host">nycfirst-d13.github.io/</span>arcade</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>Back of the classroom
+          <span class="note">Teacher utilities — prep and cleanup work students never see.</span>
+        </h2>
+        <ul class="app-row">
+          <li>
+            <a href="https://nycfirst-d13.github.io/bed-maker">
+              <span class="name">Bed Maker</span><span class="blurb">Pack a day's laser files onto one 36&times;24 bed</span>
+              <span class="url"><span class="host">nycfirst-d13.github.io/</span>bed-maker</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://nycfirst-d13.github.io/bird-bingo">
+              <span class="name">Bird Bingo</span><span class="blurb">Generate 30 printable bingo boards at once</span>
+              <span class="url"><span class="host">nycfirst-d13.github.io/</span>bird-bingo</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
       <div class="feedback">
         <img src="feedback-qr.svg" alt="QR code linking to the feedback form">
