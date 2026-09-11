@@ -44,7 +44,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 28px 24px;
+  padding: 32px 24px;
 }
 /* the deck's dot grid */
 body::before {
@@ -68,7 +68,7 @@ body::before {
 
 /* --- masthead --- */
 .masthead { display: flex; flex-direction: column; justify-content: center; }
-.masthead .logos { display: flex; gap: 10px; margin: 0 0 14px; }
+.masthead .logos { display: flex; gap: 12px; margin: 0 0 16px; }
 .masthead .logos img { height: 46px; }
 .masthead h1 {
   margin: 8px 0 0;
@@ -87,16 +87,16 @@ body::before {
   width: 42px;
   height: 3px;
   background: var(--accent);
-  margin: 16px 0 0;
+  margin: 20px 0 0;
 }
 
 /* --- top zone: hero left, blue rail right (deck slide 1) --- */
 .top {
   display: grid;
   grid-template-columns: 1fr 360px;
-  gap: 22px;
+  gap: 24px;
   align-items: stretch;
-  margin: 0 0 22px;
+  margin: 0 0 24px;
 }
 
 .rail {
@@ -108,7 +108,7 @@ body::before {
   color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .rail::before {
   content: "";
@@ -122,7 +122,7 @@ body::before {
 .rail .eyebrow { color: rgba(255,255,255,.72); }
 .rail .host {
   display: block;
-  margin-top: 6px;
+  margin-top: 4px;
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: clamp(15px, 1.55vw, 21px);
@@ -132,7 +132,7 @@ body::before {
 }
 .rail hr { border: 0; border-top: 1.5px solid rgba(255,255,255,.28); }
 
-.rail .fb { display: flex; align-items: center; gap: 14px; }
+.rail .fb { display: flex; align-items: center; gap: 16px; }
 .rail .fb img {
   width: 84px;
   height: 84px;
@@ -159,23 +159,18 @@ body::before {
 .rail a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 /* --- two halves of the room --- */
-.rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: stretch; }
-.room { display: flex; flex-direction: column; }
+.rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
 .room > .eyebrow { display: block; }
 .room .lead {
-  margin: 5px 0 14px;
+  margin: 4px 0 24px;
   font-size: clamp(13px, 1.4vw, 16px);
   color: var(--ink-3);
 }
 
-.apps { list-style: none; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.apps li { display: flex; flex: 1; }
+.apps { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 .apps a {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  padding: 14px 16px;
+  display: block;
+  padding: 16px;
   background: var(--surface);
   border: 1.5px solid var(--rule);
   border-radius: 10px;
@@ -198,12 +193,12 @@ body::before {
 }
 .apps .what {
   display: block;
-  margin: 2px 0 10px;
+  margin: 4px 0 12px;
   font-size: clamp(12px, 1.3vw, 15px);
   color: var(--ink-3);
 }
 .apps .slug {
-  align-self: flex-start;
+  display: inline-block;
   padding: 5px 12px;
   border-radius: 6px;
   background: var(--surface-2);

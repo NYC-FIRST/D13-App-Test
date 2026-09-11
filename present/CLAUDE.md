@@ -41,7 +41,12 @@ something needs a new value, take it from those two files.
 - Sections: front = `laser-maker`, `stem-stations`, `arcade` (students open these themselves);
   back = `bed-maker`, `bird-bingo` (teacher utilities). `hello-waves` and
   `card-prompt-builder.html` are deliberately absent.
-- Columns stretch to equal height, so the shorter back column's cards grow to fill.
+- **Spacing is a 4px scale: 4 / 12 / 16 / 24 / 32.** Inside a card 4 (name to description)
+  and 12 (description to URL); between cards 12; heading to its first card 24, so group
+  separation always reads as double the item separation. No off-scale one-off values.
+- **Cards keep their natural height** — all five are the same box. Don't stretch the shorter
+  back column to match the front; that was tried and it made back cards 194px against the
+  front's 126px for identical content. The uneven column bottom is fine, the dot grid carries it.
 - **It has to fit one screen at 1440x900** — no scrolling on a projector, and the QR must never
   be below the fold. Adding a row means taking the height back out of the spacing.
 
