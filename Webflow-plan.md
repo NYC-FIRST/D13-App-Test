@@ -11,9 +11,9 @@ repo, neither pointing at the other. It is switched off in Phase 7, once the
 Cloud app is proven and the new URL has been distributed. Nothing in this plan
 proxies, redirects, or falls back to Pages by design.
 
-**Status:** Phase 0 complete (2026-09-11). Phase 1 blocked — `webflow.json`
-pushed, but Cloud app creation rejects the repo for having no `package.json`.
-See §15.
+**Status:** Phase 0 complete (2026-09-11). Phase 1 blocked — `package.json`
+added and the repo now validates, but app creation silently reverts to the form
+instead of deploying. See §15.
 
 ---
 
@@ -95,8 +95,8 @@ plan around a guess; each has a cheap empirical resolution.
 | Which directory a `static` app publishes (repo root? `public/`? `dist/`?) | First deploy log. Advanced settings has an app-root override if it isn't repo root. |
 | Whether `package.json` is required for `static` | First deploy. If detection fails, `webflow.json` should still pin it. |
 | Deployment limits (file count, file size, total size) | 145 files / 11 MB is small; unlikely to matter. |
-| Whether the trailing-slash 301 is platform-wide or specific to the display-api app's own router | Phase 2 test deploy. |
-| Whether site password protection covers Cloud apps | Phase 2 — note the behavior, don't gate on it. The 401 is pre-launch safety on the Webflow site, not a user-facing state at deployment. |
+| ~~Whether the trailing-slash 301 is platform-wide or specific to the display-api app's own router~~ | **Resolved §15.4.** Platform-wide. |
+| ~~Whether site password protection covers Cloud apps~~ | **Resolved §15.4.** It does not. |
 | Whether a mount path of `/` is permitted (needed for the subdomain plan) | Phase 5 — test, or ask Webflow support. |
 | Whether `static` is a usable framework or a reserved-but-unimplemented value | §15. App creation rejects a repo with no `package.json`. |
 
@@ -490,3 +490,46 @@ just "delete the Cloud app".
 - [ ] Option 1 attempted — record the exact error or the published directory.
 - [ ] Option 2 if option 1 fails.
 - [ ] Support ticket sent (also ask about a `/` mount path).
+
+### 15.4 Deployment silently reverts to the form (2026-09-11)
+
+With `package.json` pushed (`9532140`) the repo validates and the creation form
+is accepted — then initialization stops and the UI drops back to the form. No
+error surfaced. No app created.
+
+Probing the live site while diagnosing resolved two §3 unknowns for free:
+
+```
+/d13-app        401   Designer page, published, password-protected
+/d13-app/       301 -> /d13-app
+/display-api    200   Cloud app, not behind the password
+/               200
+/d13, /d13app   404   unused
+```
+
+- **Site/page password protection does not cover Cloud apps.** A
+  password-protected Webflow page returns 401 while the Cloud app at
+  `/display-api` returns 200.
+- **The trailing-slash 301 is platform-wide**, not the display-api app's own
+  router — a plain Webflow page does it too. So §4's base-URL risk is real and
+  Phase 2 must check it.
+- **`/d13-app` is a live published page**, not a draft. Leading suspect for the
+  silent failure: the mount path collides with an existing page slug. The
+  docs' precedence rule covers route conflicts at *serve* time and says nothing
+  about whether creation accepts a colliding path.
+
+Diagnostic order, cheapest first:
+
+- [ ] DevTools → Network, retry. The failing request's response body carries
+      the real error; a silent form-revert is a swallowed 4xx.
+- [ ] Retry with mount path `d13`. One form field, no code change. Creating
+      successfully confirms the collision.
+- [ ] Delete the empty Designer page `6a9990cb967581032d3aee6e` — Phase 4
+      deletes it anyway, and it is empty and password-gated — then retry
+      `d13-app`.
+- [ ] If all three fail, `static` is being rejected server-side. Go to §15
+      option 2.
+
+This supersedes §4's "do not test at a throwaway mount path" for *diagnosis*
+only. That argument was about not tuning hardcoded base-path remedies twice;
+no code has been changed yet, so a temporary mount path costs nothing here.
