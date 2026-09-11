@@ -6,7 +6,8 @@ the room to type by hand, and a feedback form URL + QR.
 
 ## Stack
 
-Single `index.html`. No build step, no JS. **Self-contained — it deliberately does not load
+Single `index.html`. No build step; the only JS is the few lines at the end that measure the
+URLs for the type-in animation. **Self-contained — it deliberately does not load
 `../styles.css`**; that sheet's Inter + blue gradient fights the look below.
 
 | File | Role |
@@ -59,6 +60,27 @@ something needs a new value, take it from those two files.
   column was tried and made them 194px against 126px for identical content. Don't.
 - **It has to fit one screen at 1440x900** — no scrolling on a projector, and the QR must never
   be below the fold. Adding a row means taking the height back out of the spacing.
+
+## Motion
+
+One orchestrated page-load pass, nothing on scroll and nothing on hover. Easing is the deck's
+own `--ease-expo`; the shape is its `translateY` fade-up.
+
+- Blocks ease up in reading order via `.reveal` with an inline `--d` delay: masthead 0-.30s,
+  cards .46/.59/.72s, feedback .90s.
+- Every URL then types itself in like an address bar, each starting .26s after its own block
+  lands. A blinking caret runs for the duration and ends transparent.
+- **The type-in animates `width` with `steps()`, deliberately.** Rewriting the text
+  character-by-character would destroy the host/path two-tone colouring; animating the width of
+  an `overflow: hidden` box leaves the markup untouched.
+- **The pixel target has to be measured, not computed.** `ch` units ignore `letter-spacing` and a
+  percentage resolves against the containing block, so both leave a trailing gap inside the chip.
+  The script measures each URL's natural width after `document.fonts.ready` — measuring earlier
+  gets the fallback font's metrics.
+- The hero URL is skipped below 900px, where it is allowed to wrap and a `nowrap` type-in
+  would clip it.
+- `prefers-reduced-motion` is honoured in both places: the CSS drops the animations and the
+  script returns before arming anything. Verified — every URL renders full width, opacity 1.
 
 ## Regenerating the QR
 

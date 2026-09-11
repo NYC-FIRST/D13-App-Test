@@ -31,6 +31,7 @@
   --sh-2: 0 2px 8px -2px rgba(15,17,23,.08), 0 1px 2px rgba(15,17,23,.04);
   --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -185,6 +186,43 @@ body::before {
 .fb:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
 .fb:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
+/* ------------------------------------------------------------------
+   Motion: one orchestrated page-load pass. Blocks ease up in reading
+   order, and every URL types itself in like an address bar. Easing and
+   the fade-up shape are the deck's own (--ease-expo, translateY).
+   ------------------------------------------------------------------ */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.reveal { animation: fade-up .55s var(--ease-expo) var(--d, 0s) both; }
+
+/* steps() on width, so the two-tone host/path colouring survives untouched */
+@keyframes type-in { from { width: 0; } to { width: var(--w); } }
+@keyframes caret { 0%, 100% { border-color: transparent; } 50% { border-color: currentColor; } }
+.type {
+  display: inline-block;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+.type.armed { width: 0; overflow: hidden; }
+.type.typing {
+  overflow: hidden;
+  border-right: .06em solid transparent;
+  animation: type-in .75s steps(var(--n)) var(--td, 0s) both,
+             caret .42s steps(1) var(--td, 0s) 3 both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; }
+  .type, .type.armed, .type.typing {
+    width: auto;
+    overflow: visible;
+    border-right-color: transparent;
+    animation: none;
+  }
+}
+
 @media (max-width: 900px) {
   .rooms { grid-template-columns: 1fr; }
   .host { white-space: normal; }
@@ -195,45 +233,67 @@ body::before {
   <div class="page">
 
     <header class="masthead">
-      <div class="logos" aria-hidden="true">
+      <div class="logos reveal" aria-hidden="true">
         <img src="../nyfc-d13_decal-logo.png" alt="">
         <img src="../d13_logo.png" alt="">
       </div>
-      <h1>Play with some of SC @ D13&rsquo;s Homegrown Apps</h1>
-      <p class="sub">Purpose-built tools for STEM classrooms</p>
-      <span class="host">nycfirst-d13.github.io<span class="seg">/present</span></span>
-      <div class="rule"></div>
+      <h1 class="reveal" style="--d:.06s">Play with some of SC @ D13&rsquo;s Homegrown Apps</h1>
+      <p class="sub reveal" style="--d:.12s">Purpose-built tools for STEM classrooms</p>
+      <span class="host reveal" style="--d:.20s"><span class="type" data-type style="--td:.52s">nycfirst-d13.github.io<span class="seg">/present</span></span></span>
+      <div class="rule reveal" style="--d:.30s"></div>
     </header>
 
     <div class="rooms">
 
       <ul class="apps apps--front">
-        <li><a href="https://nycfirst-d13.github.io/laser-maker">
+        <li class="reveal" style="--d:0.46s"><a href="https://nycfirst-d13.github.io/laser-maker">
           <span class="name">Laser Maker</span>
           <span class="what">Design vector files for the laser cutter</span>
-          <span class="slug">nycfirst-d13.github.io<span class="seg">/laser-maker</span></span>
+          <span class="slug"><span class="type" data-type style="--td:0.72s">nycfirst-d13.github.io<span class="seg">/laser-maker</span></span></span>
         </a></li>
-        <li><a href="https://nycfirst-d13.github.io/stem-stations">
+        <li class="reveal" style="--d:0.59s"><a href="https://nycfirst-d13.github.io/stem-stations">
           <span class="name">STEM Stations</span>
           <span class="what">STEM activities for kids</span>
-          <span class="slug">nycfirst-d13.github.io<span class="seg">/stem-stations</span></span>
+          <span class="slug"><span class="type" data-type style="--td:0.85s">nycfirst-d13.github.io<span class="seg">/stem-stations</span></span></span>
         </a></li>
-        <li><a href="https://nycfirst-d13.github.io/arcade">
+        <li class="reveal" style="--d:0.72s"><a href="https://nycfirst-d13.github.io/arcade">
           <span class="name">D13 Arcade</span>
           <span class="what">Play student-made MakeCode games</span>
-          <span class="slug">nycfirst-d13.github.io<span class="seg">/arcade</span></span>
+          <span class="slug"><span class="type" data-type style="--td:0.98s">nycfirst-d13.github.io<span class="seg">/arcade</span></span></span>
         </a></li>
       </ul>
 
-      <a class="fb" href="https://t.ly/u1CYu">
+      <a class="fb reveal" style="--d:.90s" href="https://t.ly/u1CYu">
         <span class="name">Share feedback</span>
         <span class="what">Bugs, wishes, half-formed ideas.</span>
         <span class="qr"><img src="feedback-qr.svg" alt=""></span>
-        <span class="slug">t.ly/u1CYu</span>
+        <span class="slug"><span class="type" data-type style="--td:1.16s">t.ly/u1CYu</span></span>
       </a>
 
     </div>
 
   </div>
+
+<script>
+// Type-in needs a real pixel target: ch units ignore letter-spacing, and a percentage
+// would resolve against the containing block rather than the text. So measure each URL
+// at its natural width once the webfont is actually in use, then animate to that.
+(() => {
+  const els = [...document.querySelectorAll('[data-type]')];
+  if (!els.length || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // the hero URL is allowed to wrap below 900px, where a nowrap type-in would clip it
+  const skipHost = matchMedia('(max-width: 900px)').matches;
+  const live = els.filter(el => !(skipHost && el.closest('.host')));
+  live.forEach(el => el.classList.add('armed'));
+  const run = () => live.forEach(el => {
+    el.classList.remove('armed');
+    const w = el.getBoundingClientRect().width;
+    el.style.setProperty('--w', w + 'px');
+    el.style.setProperty('--n', el.textContent.length);
+    el.classList.add('typing');
+  });
+  document.fonts ? document.fonts.ready.then(run) : run();
+})();
+</script>
 </body>
 </html>
