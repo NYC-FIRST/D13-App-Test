@@ -67,21 +67,33 @@ body::before {
 }
 
 /* --- masthead --- */
-.masthead { display: flex; flex-direction: column; justify-content: center; }
+.masthead { margin: 0 0 28px; }
 .masthead .logos { display: flex; gap: 12px; margin: 0 0 16px; }
 .masthead .logos img { height: 46px; }
 .masthead h1 {
   margin: 8px 0 0;
-  font-size: clamp(28px, 3.9vw, 52px);
+  font-size: clamp(28px, 3.6vw, 50px);
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1.02;
 }
 .masthead .sub {
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   font-size: clamp(14px, 1.6vw, 19px);
   color: var(--ink-3);
-  max-width: 62ch;
+}
+
+/* the address the whole room is typing — the largest thing on the page */
+.host {
+  display: block;
+  margin: 16px 0 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(26px, 5.2vw, 76px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  white-space: nowrap;
 }
 .masthead .rule {
   width: 42px;
@@ -89,74 +101,6 @@ body::before {
   background: var(--accent);
   margin: 20px 0 0;
 }
-
-/* --- top zone: hero left, blue rail right (deck slide 1) --- */
-.top {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 24px;
-  align-items: stretch;
-  margin: 0 0 24px;
-}
-
-.rail {
-  position: relative;
-  overflow: hidden;
-  background: var(--blue);
-  border-radius: 14px;
-  padding: 20px 22px;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.rail::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-  background-size: 34px 34px;
-  pointer-events: none;
-}
-.rail > * { position: relative; }
-.rail .eyebrow { color: rgba(255,255,255,.72); }
-.rail .host {
-  display: block;
-  margin-top: 4px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: clamp(15px, 1.55vw, 21px);
-  letter-spacing: -0.02em;
-  color: #fff;
-  white-space: nowrap;
-}
-.rail hr { border: 0; border-top: 1.5px solid rgba(255,255,255,.28); }
-
-.rail .fb { display: flex; align-items: center; gap: 16px; }
-.rail .fb img {
-  width: 84px;
-  height: 84px;
-  display: block;
-  background: #fff;
-  border-radius: 8px;
-  padding: 5px;
-  flex-shrink: 0;
-}
-.rail .fb p { font-size: 13px; color: rgba(255,255,255,.78); margin-top: 3px; }
-.rail .short {
-  display: inline-block;
-  margin-top: 8px;
-  padding: 5px 12px;
-  border-radius: 6px;
-  background: #fff;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  font-size: clamp(14px, 1.5vw, 19px);
-  color: var(--blue);
-  text-decoration: none;
-}
-.rail .short:hover { text-decoration: underline; text-underline-offset: 3px; }
-.rail a:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
 
 /* --- two halves of the room --- */
 .rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
@@ -247,16 +191,40 @@ body::before {
 .feedback .short:hover { text-decoration: underline; text-underline-offset: 3px; }
 .feedback .short:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
+/* feedback lives in the back column but keeps the blue, so it is clearly not an app */
+.apps .fb {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--blue);
+  border-color: var(--blue);
+}
+.apps .fb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
+  background-size: 34px 34px;
+  pointer-events: none;
+}
+.apps .fb > * { position: relative; }
+.apps .fb img { width: 102px; height: 102px; display: block; background: #fff; border-radius: 6px; padding: 5px; flex-shrink: 0; }
+.apps .fb .eyebrow { color: rgba(255,255,255,.72); }
+.apps .fb .name { color: #fff; margin-top: 4px; }
+.apps .fb .what { color: rgba(255,255,255,.78); }
+.apps .fb .slug { background: #fff; color: var(--blue); }
+
 @media (max-width: 760px) {
   .rooms { grid-template-columns: 1fr; }
-  .top { grid-template-columns: 1fr; }
+  .host { white-space: normal; }
 }
 </style>
 </head>
 <body>
   <div class="page">
 
-    <div class="top">
     <header class="masthead">
       <div class="logos" aria-hidden="true">
         <img src="../nyfc-d13_decal-logo.png" alt="">
@@ -264,32 +232,15 @@ body::before {
       </div>
       <p class="eyebrow">NYC FIRST District 13 &middot; STEM Center</p>
       <h1>Play With D13&rsquo;s Homegrown Apps</h1>
-      <p class="sub">Purpose-built tools for STEM classrooms. Five of them, live right now, nothing to install.</p>
+      <p class="sub">Purpose-built tools for STEM classrooms</p>
+      <span class="host">nycfirst-d13.github.io/</span>
       <div class="rule"></div>
     </header>
-
-      <aside class="rail">
-        <div>
-          <p class="eyebrow">Every link starts here</p>
-          <span class="host">nycfirst-d13.github.io/</span>
-        </div>
-        <hr>
-        <div class="fb">
-          <img src="feedback-qr.svg" alt="QR code to the feedback form">
-          <div>
-            <p class="eyebrow">Feedback</p>
-            <p>Something broke? Bugs, wishes, half-formed ideas.</p>
-            <a class="short" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
-          </div>
-        </div>
-      </aside>
-    </div>
 
     <div class="rooms">
 
       <section class="room room--front">
         <p class="eyebrow">Front of the classroom</p>
-        <p class="lead">Students drive these. Hand out the link and get out of the way.</p>
         <ul class="apps">
           <li><a href="https://nycfirst-d13.github.io/laser-maker">
             <span class="name">Laser Maker</span>
@@ -311,7 +262,6 @@ body::before {
 
       <section class="room room--back">
         <p class="eyebrow">Back of the classroom</p>
-        <p class="lead">You drive these. Prep and cleanup the room never sees.</p>
         <ul class="apps">
           <li><a href="https://nycfirst-d13.github.io/bed-maker">
             <span class="name">Bed Maker</span>
@@ -322,6 +272,14 @@ body::before {
             <span class="name">Bird Bingo</span>
             <span class="what">Generate 30 printable bingo boards at once</span>
             <span class="slug">/bird-bingo</span>
+          </a></li>
+          <li><a class="fb" href="https://t.ly/u1CYu">
+            <img src="feedback-qr.svg" alt="">
+            <span>
+              <span class="eyebrow">Feedback</span>
+              <span class="name">Something broke? Tell us.</span>
+              <span class="slug">t.ly/u1CYu</span>
+            </span>
           </a></li>
         </ul>
       </section>

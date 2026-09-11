@@ -31,16 +31,20 @@ something needs a new value, take it from those two files.
 
 ## Rules
 
-- **Layout follows deck slide 1:** hero left, solid blue rail right. The rail carries the two
-  things a room needs — the base URL and the feedback QR — and wears the white-dot grid.
-- **The base URL is said once**, in the rail. Each app row is only its slug. Never reintroduce
-  the full host per row; repeating it five times is what made an earlier version feel cluttered.
+- **`nycfirst-d13.github.io/` is the largest thing on the page** (~75px, above the red rule) and
+  is said exactly once. Each app row is only its slug — never reintroduce the full host per row.
+  Nothing labels or explains the host; it speaks for itself.
+- **The h1 stays on one line at full width.** If the copy grows, shrink the clamp, don't let it wrap.
+- Section headings are the eyebrow alone. No explanatory line underneath.
 - **Front of the classroom is the tinted group** (`blue-soft` cards, blue names), back is plain
   white — the same way the deck tints the card that matters. That tint is the front/back
   division; don't add a second device on top of it.
 - Sections: front = `laser-maker`, `stem-stations`, `arcade` (students open these themselves);
   back = `bed-maker`, `bird-bingo` (teacher utilities). `hello-waves` and
   `card-prompt-builder.html` are deliberately absent.
+- **The feedback card is the last row of the back column**, and the whole card is one link to the
+  form. It keeps the solid `--blue` so it reads as not-an-app despite sitting in that column.
+  Its QR is sized to hold the card at the same height as the app cards (all six are 134-136px).
 - **Spacing is a 4px scale: 4 / 12 / 16 / 24 / 32.** Inside a card 4 (name to description)
   and 12 (description to URL); between cards 12; heading to its first card 24, so group
   separation always reads as double the item separation. No off-scale one-off values.
