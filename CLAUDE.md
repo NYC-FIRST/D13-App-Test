@@ -20,6 +20,7 @@ Each child directory is a self-contained app or page. Current children:
 | `stem-stations/` | STEM stations landing page |
 | `bird-bingo/` | Bird bingo game |
 | `hello-waves/` | Hello waves app |
+| `present/` | One-off projector page for the 2026-09-11 staff PD. Standalone, not linked from the site |
 
 ## Git & Commits
 
