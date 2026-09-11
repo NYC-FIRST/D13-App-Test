@@ -6,166 +6,215 @@
 <title>Play With D13's Homegrown Apps</title>
 <link rel="stylesheet" href="../styles.css">
 <style>
-  /* present page — projector-first: big type, one screen, no scroll */
-  #present-page { padding: 12px 24px; }
-  #present-page .wrap { max-width: 1100px; }
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&display=swap');
 
-  #present-page .card-header { justify-content: center; text-align: center; margin: 0 0 18px; }
-  #present-page .card-logos img { height: 48px; }
-  #present-page h1 {
-    margin: 0;
-    font-size: clamp(22px, 3.2vw, 38px);
-    line-height: 1.2;
-  }
-  #present-page h1 .sub {
-    display: block;
-    font-weight: 400;
-    font-size: 0.6em;
-    color: var(--text-muted);
-    margin-top: 6px;
-  }
+/* ------------------------------------------------------------------
+   Present — the PD room page.
+   Front of the classroom sits open on the page. Back of the classroom
+   is a dark panel: the split is spatial, so the design is too.
+   ------------------------------------------------------------------ */
+:root {
+  --front: #1d4ed8;      /* student blue, from the site palette */
+  --back-bg: #17293d;    /* behind the scenes */
+  --back-ink: #e8f1fb;
+  --back-muted: #93aecb;
+  --amber: #ffb84d;      /* the machines */
+}
 
-  .section { margin: 0 0 12px; }
-  .section + .section { margin-top: 16px; }
-  .section h2 {
-    font-size: clamp(15px, 1.5vw, 19px);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--primary-dark);
-    margin: 0 0 2px;
-  }
-  .section .note {
-    display: block;
-    font-size: clamp(13px, 1.3vw, 16px);
-    letter-spacing: 0;
-    text-transform: none;
-    font-weight: 400;
-    color: var(--text-muted);
-  }
+#present-page {
+  padding: 24px;
+  align-items: center;
+}
+#present-page .room-page { width: 100%; max-width: 1180px; }
 
-  .app-row {
-    list-style: none;
-    margin: 6px 0 0;
-    padding: 0;
-  }
-  .app-row a {
-    display: block;
-    padding: 11px 4px;
-    border-top: 1px solid var(--border-light);
-    text-decoration: none;
-    color: var(--text-primary);
-  }
-  .app-row li:last-child a { border-bottom: 1px solid var(--border-light); }
-  .app-row a:hover .url { text-decoration: underline; }
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
 
-  .app-row .name { font-weight: 800; font-size: clamp(17px, 1.7vw, 21px); }
-  .app-row .blurb { color: var(--text-muted); font-size: clamp(14px, 1.4vw, 17px); }
-  .app-row .blurb::before { content: " — "; }
-  .app-row .url {
-    display: block;
-    margin-top: 2px;
-    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    font-size: clamp(19px, 2.1vw, 28px);
-    font-weight: 700;
-    color: var(--primary-dark);
-  }
-  .app-row .host { font-weight: 500; color: var(--text-muted); }
+/* --- masthead --- */
+.masthead { text-align: center; margin: 0 0 26px; }
+.masthead .logos {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.masthead .logos img { height: 52px; }
+.masthead h1 {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.masthead p {
+  margin: 6px 0 0;
+  font-size: clamp(15px, 1.6vw, 20px);
+  color: var(--text-muted);
+}
 
-  .feedback {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 28px;
-    flex-wrap: wrap;
-    background: var(--surface-faint);
-    border-radius: 18px;
-    padding: 16px 24px;
-  }
-  .feedback img { width: 136px; height: 136px; }
-  .feedback h2 { font-size: clamp(18px, 2vw, 26px); }
-  .feedback .url {
-    display: inline-block;
-    font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    font-size: clamp(18px, 2.2vw, 28px);
-    font-weight: 700;
-    color: var(--primary-dark);
-    text-decoration: none;
-    word-break: break-all;
-  }
-  .feedback .url:hover { text-decoration: underline; }
-  .feedback p { color: var(--text-muted); margin: 4px 0 10px; }
+/* --- the shared base URL, said once instead of five times --- */
+.base {
+  text-align: center;
+  margin: 0 0 22px;
+  font-size: clamp(14px, 1.5vw, 18px);
+  color: var(--text-muted);
+}
+.base b {
+  font-weight: 700;
+  font-size: clamp(19px, 2.3vw, 30px);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* --- the two halves of the room --- */
+.rooms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.room {
+  border-radius: 22px;
+  padding: 26px 28px 30px;
+}
+.room h2 {
+  margin: 0;
+  font-size: clamp(19px, 2.1vw, 27px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.room .lead { margin: 2px 0 0; font-size: clamp(14px, 1.5vw, 17px); }
+
+.room--front { background: rgba(255, 255, 255, 0.58); }
+.room--front .lead { color: var(--text-muted); }
+
+.room--back { background: var(--back-bg); color: var(--back-ink); }
+.room--back h2 { color: #fff; }
+.room--back .lead { color: var(--back-muted); }
+
+/* --- app links: the slug is the name, so there is no name line --- */
+.apps { list-style: none; margin: 20px 0 0; padding: 0; }
+.apps li + li { margin-top: 16px; }
+.apps a {
+  display: block;
+  text-decoration: none;
+  border-radius: 10px;
+  outline-offset: 4px;
+}
+.apps .slug {
+  display: block;
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.apps .what {
+  display: block;
+  margin-top: 1px;
+  font-size: clamp(13px, 1.4vw, 16px);
+}
+.room--front .slug { color: var(--front); }
+.room--front .what { color: var(--text-muted); }
+.room--back .slug { color: var(--amber); }
+.room--back .what { color: var(--back-muted); }
+.apps a:hover .slug,
+.apps a:focus-visible .slug { text-decoration: underline; text-underline-offset: 4px; }
+
+/* --- feedback --- */
+.feedback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin: 26px 0 0;
+  text-align: left;
+}
+.feedback img {
+  width: 112px;
+  height: 112px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 6px;
+}
+.feedback h2 { margin: 0; font-size: clamp(16px, 1.8vw, 21px); font-weight: 800; }
+.feedback p { margin: 1px 0 4px; font-size: clamp(13px, 1.4vw, 16px); color: var(--text-muted); }
+.feedback .short {
+  font-size: clamp(18px, 2.1vw, 27px);
+  font-weight: 700;
+  color: var(--front);
+  text-decoration: none;
+}
+.feedback .short:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+/* --- one column on a phone; the room metaphor still reads top-to-bottom --- */
+@media (max-width: 760px) {
+  .rooms { grid-template-columns: 1fr; }
+  .feedback { flex-direction: column; text-align: center; }
+}
 </style>
 </head>
 <body id="present-page">
-  <div class="wrap">
-    <div class="card">
+  <div class="room-page">
 
-      <div class="card-header">
-        <div class="card-logos" aria-hidden="true">
-          <img src="../nyfc-d13_decal-logo.png" alt="">
-          <img src="../d13_logo.png" alt="">
-        </div>
-        <h1>Play With D13&rsquo;s Homegrown Apps
-          <span class="sub">Purpose-Built Tools for STEM Classrooms</span>
-        </h1>
+    <header class="masthead">
+      <div class="logos" aria-hidden="true">
+        <img src="../nyfc-d13_decal-logo.png" alt="">
+        <img src="../d13_logo.png" alt="">
       </div>
+      <h1>Play With D13&rsquo;s Homegrown Apps</h1>
+      <p>Purpose-built tools for STEM classrooms</p>
+    </header>
 
-      <div class="section">
-        <h2>Front of the classroom
-          <span class="note">Students open these themselves — hand out the URL and go.</span>
-        </h2>
-        <ul class="app-row">
-          <li>
-            <a href="https://nycfirst-d13.github.io/laser-maker">
-              <span class="name">Laser Maker</span><span class="blurb">Design vector files for the laser cutter</span>
-              <span class="url"><span class="host">nycfirst-d13.github.io/</span>laser-maker</span>
-            </a>
-          </li>
-          <li>
-            <a href="https://nycfirst-d13.github.io/stem-stations">
-              <span class="name">STEM Stations</span><span class="blurb">STEM activities for kids</span>
-              <span class="url"><span class="host">nycfirst-d13.github.io/</span>stem-stations</span>
-            </a>
-          </li>
-          <li>
-            <a href="https://nycfirst-d13.github.io/arcade">
-              <span class="name">D13 Arcade</span><span class="blurb">Play student-made MakeCode games</span>
-              <span class="url"><span class="host">nycfirst-d13.github.io/</span>arcade</span>
-            </a>
-          </li>
+    <p class="base">Everything starts with <b class="mono">nycfirst-d13.github.io/</b></p>
+
+    <div class="rooms">
+
+      <section class="room room--front">
+        <h2>Front of the classroom</h2>
+        <p class="lead">Students drive these. Hand out the link and get out of the way.</p>
+        <ul class="apps">
+          <li><a href="https://nycfirst-d13.github.io/laser-maker">
+            <span class="slug mono">/laser-maker</span>
+            <span class="what">Design vector files for the laser cutter</span>
+          </a></li>
+          <li><a href="https://nycfirst-d13.github.io/stem-stations">
+            <span class="slug mono">/stem-stations</span>
+            <span class="what">STEM activities for kids</span>
+          </a></li>
+          <li><a href="https://nycfirst-d13.github.io/arcade">
+            <span class="slug mono">/arcade</span>
+            <span class="what">Play student-made MakeCode games</span>
+          </a></li>
         </ul>
-      </div>
+      </section>
 
-      <div class="section">
-        <h2>Back of the classroom
-          <span class="note">Teacher utilities — prep and cleanup work students never see.</span>
-        </h2>
-        <ul class="app-row">
-          <li>
-            <a href="https://nycfirst-d13.github.io/bed-maker">
-              <span class="name">Bed Maker</span><span class="blurb">Pack a day's laser files onto one 36&times;24 bed</span>
-              <span class="url"><span class="host">nycfirst-d13.github.io/</span>bed-maker</span>
-            </a>
-          </li>
-          <li>
-            <a href="https://nycfirst-d13.github.io/bird-bingo">
-              <span class="name">Bird Bingo</span><span class="blurb">Generate 30 printable bingo boards at once</span>
-              <span class="url"><span class="host">nycfirst-d13.github.io/</span>bird-bingo</span>
-            </a>
-          </li>
+      <section class="room room--back">
+        <h2>Back of the classroom</h2>
+        <p class="lead">You drive these. Prep and cleanup the room never sees.</p>
+        <ul class="apps">
+          <li><a href="https://nycfirst-d13.github.io/bed-maker">
+            <span class="slug mono">/bed-maker</span>
+            <span class="what">Pack a day&rsquo;s laser files onto one 36&times;24 bed</span>
+          </a></li>
+          <li><a href="https://nycfirst-d13.github.io/bird-bingo">
+            <span class="slug mono">/bird-bingo</span>
+            <span class="what">Generate 30 printable bingo boards at once</span>
+          </a></li>
         </ul>
-      </div>
-
-      <div class="feedback">
-        <img src="feedback-qr.svg" alt="QR code linking to the feedback form">
-        <div>
-          <h2>Feedback &amp; bug reports</h2>
-          <p>Tell us what worked, what broke, what you&rsquo;d want next.</p>
-          <a class="url" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
-        </div>
-      </div>
+      </section>
 
     </div>
+
+    <div class="feedback">
+      <img src="feedback-qr.svg" alt="QR code to the feedback form">
+      <div>
+        <h2>Something broke? Tell us.</h2>
+        <p>Bugs, wishes, half-formed ideas &mdash; all welcome.</p>
+        <a class="short mono" href="https://t.ly/u1CYu">t.ly/u1CYu</a>
+      </div>
+    </div>
+
   </div>
 </body>
 </html>

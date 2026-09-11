@@ -17,17 +17,22 @@ Single `index.html`. No build step, no JS. Inherits the site theme from `../styl
 
 ## Rules
 
-- **URLs are the content.** Flat vertical stack, one app per row, rule between rows — no
-  cards, no columns. The URL is the largest thing on the row; host is muted (`.host`), path
-  is bold. Adding an app means checking the longest URL still sits on one line at 1440px.
-- **Two sections, and the split is the point.** *Front of the classroom* = apps students
-  open themselves (`laser-maker`, `stem-stations`, `arcade`). *Back of the classroom* =
-  teacher utilities students never see (`bed-maker`, `bird-bingo`). The distinction is
-  spelled out in a `.note` under each heading — keep it there, it's the takeaway.
-- A curated subset, not every child directory. `hello-waves` and `card-prompt-builder.html`
-  are deliberately absent.
-- **It has to fit one screen at 1440×900** — no scrolling on a projector, and the QR must
-  never be below the fold. Adding a row means taking the height back out of the spacing.
+- **The split is spatial, so the design is.** *Front of the classroom* sits open and light on
+  the page gradient; *back of the classroom* is a solid dark panel (`--back-bg`) — literally
+  behind the scenes. That contrast is the whole idea; don't flatten the two into matching cards.
+  Front = student blue (`--front`), back = workshop amber (`--amber`). Cool is kids, warm is machines.
+- **The base URL is said once.** `nycfirst-d13.github.io/` lives in the `.base` line above the
+  columns, so each app row is only its slug. Never reintroduce the full host per row — repeating
+  it five times is what made the earlier version feel cluttered.
+- **The slug is the app's name.** No separate name line: `/bed-maker` plus one plain sentence
+  about what it does. Two lines per app, no more.
+- Sections: front = `laser-maker`, `stem-stations`, `arcade` (students open these themselves);
+  back = `bed-maker`, `bird-bingo` (teacher utilities). `hello-waves` and
+  `card-prompt-builder.html` are deliberately absent.
+- **It has to fit one screen at 1440x900** — no scrolling on a projector, and the QR must never
+  be below the fold. Adding a row means taking the height back out of the spacing.
+- Type: Inter (from `../styles.css`) for prose, JetBrains Mono for URLs only. The mono is
+  functional, not decorative — a room full of people typing needs unambiguous `l`, `1`, `0`.
 
 ## Regenerating the QR
 
