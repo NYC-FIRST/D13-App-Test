@@ -4,6 +4,28 @@ PD landing page — **"Play with some of SC @ D13's Homegrown Apps."**
 Served at `/present/`. One screen, projector-first: title, a row of app URLs big enough for
 the room to type by hand, and a feedback form URL + QR.
 
+## What this is, and what it isn't
+
+Built **2026-09-10** for a single staff training PD on **2026-09-11**. Its whole job is to be
+on a projector for one session while a room of teachers types the URLs into their own laptops
+and scans the QR.
+
+**It is not part of the main site.** Nothing links to it, it is not in any nav, and the site
+root (`/`) still serves the student STEM-card welcome page, untouched. It is a standalone
+utility that happens to live in the repo because that is where GitHub Pages can serve it from.
+
+Treat it as **disposable by default**. After 2026-09-11 it is fine to delete the directory
+outright — no other page imports from it and removing it breaks nothing. Two things make it
+worth keeping instead:
+
+- It is a working, self-contained example of the `laser-maker/docs` design system applied to a
+  normal web page rather than a slide deck. If another one-off page is ever needed, copy this
+  and swap the content — that is faster than rebuilding the tokens.
+- The app list and blurbs are current as of 2026-09-10 and would need re-checking before reuse.
+
+If it does get reused, the first things to change are the three app cards, the feedback short
+URL (and its QR — see below), the title, and the hero's `/present` path.
+
 ## Stack
 
 Single `index.html`. No build step; the only JS is the few lines at the end that measure the
