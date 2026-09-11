@@ -11,8 +11,9 @@ repo, neither pointing at the other. It is switched off in Phase 7, once the
 Cloud app is proven and the new URL has been distributed. Nothing in this plan
 proxies, redirects, or falls back to Pages by design.
 
-**Status:** Phase 0 complete (2026-09-11). Phase 1 not started — no
-`webflow.json`, no Cloud app.
+**Status:** Phase 0 complete (2026-09-11). Phase 1 blocked — `webflow.json`
+pushed, but Cloud app creation rejects the repo for having no `package.json`.
+See §15.
 
 ---
 
@@ -97,7 +98,7 @@ plan around a guess; each has a cheap empirical resolution.
 | Whether the trailing-slash 301 is platform-wide or specific to the display-api app's own router | Phase 2 test deploy. |
 | Whether site password protection covers Cloud apps | Phase 2 — note the behavior, don't gate on it. The 401 is pre-launch safety on the Webflow site, not a user-facing state at deployment. |
 | Whether a mount path of `/` is permitted (needed for the subdomain plan) | Phase 5 — test, or ask Webflow support. |
-| How far back Webflow Cloud's redeployable build history goes | Phase 1 — check the environment dashboard. This is the rollback mechanism after Phase 7 (§11). |
+| Whether `static` is a usable framework or a reserved-but-unimplemented value | §15. App creation rejects a repo with no `package.json`. |
 
 ---
 
@@ -181,8 +182,8 @@ Cloud. At the root of a subdomain (Phase 5) it disappears entirely.
 - [ ] Branch: `main`. App root: blank. Mount path: **`d13-app`**.
 - [ ] Deploy. Read the build log and record which directory was published
       (resolves an unknown from §3).
-- [ ] Check the environment dashboard for redeployable build history — this is
-      the rollback mechanism from §11.
+- [ ] Note the published directory in the build log. There is no build-history
+      rollback to check for — see §11, corrected.
 
 From here on, every push to `main` deploys to Webflow Cloud *and* republishes
 GitHub Pages. Two hosts, same commit, no coordination needed between them.
@@ -280,10 +281,14 @@ either way.
 
 Once Phase 7 lands, rollback means going backwards *within Webflow Cloud*:
 
-- **Bad deploy** — redeploy the previous build from the environment dashboard.
-  Confirm in Phase 1 how many builds back that list reaches (§3).
-- **Bad commit** — `git revert` on `main` and push. That triggers a fresh
-  deploy of the reverted tree, same as any other push.
+- **Bad deploy** — there is no dashboard redeploy. Webflow Cloud's documented
+  rollback is git-only: "Revert your branch to the desired commit in GitHub"
+  and push. It "creates a new deployment with the previous code version. It
+  doesn't restore the exact state of the previous deployment." Old deployments
+  cannot even be previewed — only the most recent successful one.
+- **Bad commit** — same mechanism: `git revert` on `main` and push.
+- **Failed build** — nothing to do. "The most recent successful build will
+  continue running. Failed deployments never impact your live site.""
 - **Broken mount path** — change it back and redeploy. The app keeps serving at
   the old path until the change lands.
 
@@ -418,3 +423,70 @@ have exported anything they cared about.
 
 Phase 7 is the only irreversible step. Everything before it is undone by
 deleting the Cloud app.
+
+---
+
+## 15. Phase 1 blocker — `package.json` required at app creation (2026-09-11)
+
+Creating the Cloud app failed before any deploy, at repo validation:
+
+> No package.json found
+> Astro and Next.js apps need a package.json to deploy.
+
+`webflow.json` was already pushed and present at the repo root (`62c4c25`), so
+it was either not read at this stage or does not exempt the repo from the check.
+
+### 15.1 What the docs actually say
+
+- `static` **is** a listed value: "Supported values are `nextjs`, `astro`,
+  `vite`, and `static`." That is the *only* mention of it anywhere in the
+  Webflow Cloud docs. No static-site guide, no published directory, no
+  statement about whether it skips `npm install` or a build command.
+- The CLI reference is narrower still: `framework` is "Framework preset either
+  `nextjs` or `astro`".
+- Prerequisites list only Astro 6/7, Next.js 15+, Vite 6.1+, plus "Node.js 22
+  or later and npm installed". npm is the only supported package manager.
+- The build pipeline is framework-shaped end to end: clone → **detect framework
+  and version from `package.json`** → validate → `npm install` (plus the
+  adapter) → run the framework's build command → collect output.
+- Webflow's own docs assistant will not confirm that `static` works, and points
+  at support for an authoritative answer.
+
+**Read:** `static` is a real enum value on a pipeline that assumes a Node
+project. Treat it as undocumented, not as a supported no-build path.
+
+### 15.2 Useful limits (from the limits page)
+
+- Apps per Site: 5 (Starter) / 15 (Core, Freelancer) / 50 (Growth, Agency,
+  Enterprise). Confirms Phase 0 — `/display-api` plus this one is fine on any
+  plan.
+- Build output: 100 MB compressed. Other static files: 20 MB each. Images:
+  20 MB each. This repo is ~11 MB total — no concern.
+- Worker bundle: 10 MB. Static assets are not part of the worker bundle.
+- 1 GitHub repo per Cloud app; 10 environments per app.
+
+### 15.3 Options
+
+1. **Minimal `package.json` at the repo root**, keep `webflow.json` framework
+   `static`. 6 lines, no dependencies, a no-op `build` script. Inert on GitHub
+   Pages. Resolves the question with one push: either app creation proceeds and
+   the build log tells us what `static` publishes, or it fails again with a
+   *different* error, which is itself the answer. **Try this first.**
+2. **Vite shell, no repo restructure.** `vite` as a devDependency so detection
+   succeeds, `webflow.json` framework `vite`, and a build script that copies
+   the tracked files into `dist/`. Documented framework, undocumented shape.
+   Files stay at the repo root, so GitHub Pages keeps working.
+3. **Real Astro or Vite wrapper**, all 145 files moved under `public/`. Fully
+   documented path. **Breaks GitHub Pages immediately** — Pages serves the repo
+   root and cannot be pointed at `public/` — so it ends the dual-host period
+   and pulls Phase 7 forward. Worst fit for this plan.
+4. **Ask Webflow support** what `static` does and whether it is available on
+   this plan. Authoritative, slow. Worth sending in parallel with option 1, and
+   it can carry the Phase 5 `/` mount-path question (§3) in the same ticket.
+
+Options 1 and 2 both leave GitHub Pages untouched, so rollback (§11) is still
+just "delete the Cloud app".
+
+- [ ] Option 1 attempted — record the exact error or the published directory.
+- [ ] Option 2 if option 1 fails.
+- [ ] Support ticket sent (also ask about a `/` mount path).
