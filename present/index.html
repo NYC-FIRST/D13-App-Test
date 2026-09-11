@@ -89,12 +89,14 @@ body::before {
   margin: 16px 0 0;
   font-family: var(--font-mono);
   font-weight: 600;
-  font-size: clamp(26px, 5.2vw, 76px);
+  font-size: clamp(22px, 4.0vw, 58px);
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--ink);
   white-space: nowrap;
 }
+/* the path is blue, matching the slug on every app card */
+.host .seg { color: var(--blue); }
 .masthead .rule {
   width: 42px;
   height: 3px;
@@ -185,40 +187,45 @@ body::before {
 .feedback .short:hover { text-decoration: underline; text-underline-offset: 3px; }
 .feedback .short:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
-/* Feedback lives in the back column but keeps the blue, so it is clearly not an app.
-   It carries the same name/what/slug stack as every app card, and the QR is taken out of
-   flow entirely — so this card's height is identical to an app card's at every viewport,
-   instead of being pinned to whatever the QR happens to measure. */
-.apps .fb {
-  position: relative;
-  overflow: hidden;
-  background: var(--blue);
-  border-color: var(--blue);
+/* Feedback is not a card — no chrome, no fill. Blue type and a bare QR, centred in its
+   column and vertically centred against the app stack, so it reads as floating beside them. */
+.fb {
+  align-self: center;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  color: var(--blue);
+  padding: 8px;
+  border-radius: 10px;
 }
-.apps .fb::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-  background-size: 34px 34px;
-  pointer-events: none;
+.fb .qr {
+  display: block;
+  width: clamp(120px, 13vw, 180px);
+  margin: 0 auto 14px;
 }
-.apps .fb > * { position: relative; }
-.apps .fb .copy { display: block; padding-right: 124px; }
-.apps .fb .qr {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  bottom: 16px;
-  aspect-ratio: 1;
-  background: #fff;
-  border-radius: 6px;
-  padding: 5px;
+.fb .qr img { display: block; width: 100%; height: auto; }
+.fb .name {
+  display: block;
+  font-size: clamp(16px, 1.7vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
-.apps .fb .qr img { display: block; width: 100%; height: 100%; }
-.apps .fb .name { color: #fff; }
-.apps .fb .what { color: rgba(255,255,255,.78); }
-.apps .fb .slug { background: #fff; color: var(--blue); }
+.fb .what {
+  display: block;
+  margin: 2px 0 10px;
+  font-size: clamp(12px, 1.3vw, 15px);
+  color: var(--ink-3);
+}
+.fb .slug {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: clamp(15px, 1.8vw, 22px);
+  letter-spacing: -0.01em;
+  color: var(--blue);
+}
+.fb:hover .slug { text-decoration: underline; text-underline-offset: 3px; }
+.fb:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
 
 @media (max-width: 760px) {
   .rooms { grid-template-columns: 1fr; }
@@ -237,7 +244,7 @@ body::before {
       <p class="eyebrow">NYC FIRST District 13 &middot; STEM Center</p>
       <h1>Play With D13&rsquo;s Homegrown Apps</h1>
       <p class="sub">Purpose-built tools for STEM classrooms</p>
-      <span class="host">nycfirst-d13.github.io/</span>
+      <span class="host">nycfirst-d13.github.io<span class="seg">/present</span></span>
       <div class="rule"></div>
     </header>
 
@@ -261,16 +268,12 @@ body::before {
         </a></li>
       </ul>
 
-      <ul class="apps">
-        <li><a class="fb" href="https://t.ly/u1CYu">
-          <span class="qr"><img src="feedback-qr.svg" alt=""></span>
-          <span class="copy">
-            <span class="name">Share feedback</span>
-            <span class="what">Bugs, wishes, half-formed ideas.</span>
-            <span class="slug">t.ly/u1CYu</span>
-          </span>
-        </a></li>
-      </ul>
+      <a class="fb" href="https://t.ly/u1CYu">
+        <span class="name">Share feedback</span>
+        <span class="what">Bugs, wishes, half-formed ideas.</span>
+        <span class="qr"><img src="feedback-qr.svg" alt=""></span>
+        <span class="slug">t.ly/u1CYu</span>
+      </a>
 
     </div>
 

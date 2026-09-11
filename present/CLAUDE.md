@@ -31,9 +31,10 @@ something needs a new value, take it from those two files.
 
 ## Rules
 
-- **`nycfirst-d13.github.io/` is the largest thing on the page** (~75px, above the red rule) and
-  is said exactly once. Each app row is only its slug — never reintroduce the full host per row.
-  Nothing labels or explains the host; it speaks for itself.
+- **`nycfirst-d13.github.io/present` is the largest thing on the page**, above the red rule, with
+  `/present` in `--blue` to match the slug chips on the cards. It is this page's own address, so
+  the room can pull it up; it is not a prefix for the slugs below, which hang off the site root.
+  Nothing labels or explains it. It must stay on one line — if the path grows, lower the clamp.
 - **The h1 stays on one line at full width.** If the copy grows, shrink the clamp, don't let it wrap.
 - **No section headings.** The app list carries no title; the cards speak for themselves.
 - App cards are the `blue-soft` tinted group, the way the deck tints the cards that matter.
@@ -41,14 +42,13 @@ something needs a new value, take it from those two files.
   `hello-waves` and `card-prompt-builder.html` are deliberately absent — the front/back-of-
   classroom split was tried and dropped.
 - **The feedback card floats to the right of the app list** (`.rooms` is `1fr 380px`,
-  `align-items: start`), and the whole card is one link to the form. It keeps the solid `--blue` so it never reads as another app.
-- **The feedback card's height must come from its text, never from its QR.** It carries the same
-  `name` / `what` / `slug` stack as every app card, and the QR is `position: absolute` pinned
-  `top/right/bottom` with `aspect-ratio: 1`, so it sizes itself from the card rather than setting
-  it. Card heights are `clamp()`-driven and scale with viewport width; a fixed-px QR matches at
-  exactly one window size and drifts everywhere else (it was 32px too tall at 800px wide).
-  `.copy` must stay `display: block` — it is a `<span>`, and its `padding-right` that keeps text
-  clear of the QR does nothing while it is inline.
+  `align-items: start`), and the whole card is one link to the form.
+- **Feedback is not a card** — no fill, border or shadow. Blue type and a bare QR, centre-aligned
+  and `align-self: center` so it floats level with the middle of the app stack.
+- **The QR is transparent with blue modules, and it must keep `border=4`.** That is the quiet
+  zone; without it the code does not reliably scan. The dot grid showing through is fine —
+  verified by decoding the rendered pixels at both 180px and 120px. **Re-verify after any change
+  to the QR's colour, size or background** (see below).
 - **Spacing is a 4px scale: 4 / 12 / 16 / 24 / 32.** Inside a card 4 (name to description)
   and 12 (description to URL); between cards 12; heading to its first card 24, so group
   separation always reads as double the item separation. No off-scale one-off values.
@@ -64,11 +64,20 @@ The QR encodes the feedback short URL verbatim. If that URL changes, update **bo
 `<a class="url">` href and its text in `index.html`, then regenerate:
 
 ```bash
-python3 -m venv /tmp/qrvenv && /tmp/qrvenv/bin/pip install -q segno
-/tmp/qrvenv/bin/python -c "import segno; segno.make('https://NEW-URL', error='h').save('present/feedback-qr.svg', scale=10, border=2, dark='#1d4ed8', light='#ffffff')"
+python3 -m venv /tmp/qrvenv && /tmp/qrvenv/bin/pip install -q segno opencv-python-headless
+/tmp/qrvenv/bin/python -c "import segno; segno.make('https://NEW-URL', error='h').save('present/feedback-qr.svg', scale=10, border=4, dark='#2563EB', light=None)"
 ```
 
-Error correction is `H` so the code still scans from across a room or off a projector.
+Error correction is `H` so the code still scans from across a room or off a projector, and
+`border=4` is the quiet zone — do not drop it.
+
+Then confirm it still decodes **as rendered**, dot grid and all, rather than trusting the file:
+
+```bash
+npx playwright-cli goto http://localhost:8777/present/
+npx playwright-cli screenshot ".fb .qr" --filename=/tmp/qr.png
+/tmp/qrvenv/bin/python -c "import cv2; print(cv2.QRCodeDetector().detectAndDecode(cv2.imread('/tmp/qr.png'))[0])"
+```
 
 ## Git & Commits
 
