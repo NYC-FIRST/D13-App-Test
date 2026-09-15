@@ -1,0 +1,12 @@
+# TEMPORARY probe — testing whether _redirects 200-proxy rules work under a
+# Webflow Cloud mount path, and which spelling the rule path takes.
+# Webflow docs: "Rule-path semantics for _redirects under non-root mount paths
+# are still being verified." Delete this file and the _probe-* dirs when done.
+
+# a: rule written WITHOUT the mount prefix
+/_probe-a   /_probe-a/index.html   200
+
+# b: rule written WITH the mount prefix
+/d13-app/_probe-b   /d13-app/_probe-b/index.html   200
+
+# c: no rule at all — control, should still exhibit the redirect loop
