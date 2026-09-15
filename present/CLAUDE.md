@@ -131,8 +131,8 @@ npx playwright-cli screenshot ".fb .qr" --filename=/tmp/qr.png
 The git repo is the **parent directory**. Always commit from there:
 
 ```bash
-git -C /Users/avigoldman/d13 add present/
-git -C /Users/avigoldman/d13 commit -m "feat(present): ..."
+git -C /Users/avigoldman/dev/d13 add present/
+git -C /Users/avigoldman/dev/d13 commit -m "feat(present): ..."
 ```
 
 Scope each commit to this directory only — never a bare `git add .` that sweeps in other apps.

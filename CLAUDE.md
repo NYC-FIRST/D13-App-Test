@@ -11,7 +11,7 @@ Static site for the NYC FIRST District 13 STEM center, deployed as a **Webflow C
 | **Live** | `https://www.nycfirst.org/d13-app` |
 | **Staging** | `https://nycfirst.webflow.io/d13-app` |
 | **Entry URL** | `/d13-app` or `/d13-app/start` — both serve the onboarding page |
-| **Git root** | `/Users/avigoldman/d13` |
+| **Git root** | `/Users/avigoldman/dev/d13` |
 | **Config** | `webflow.json` → `{"cloud":{"framework":"static"}}`. The mount path lives in the Webflow dashboard, not in this repo. |
 
 *History: this was `nycfirst-d13.github.io` on GitHub Pages until 2026-09. Pages is retired — it is not a fallback, not a mirror, and nothing here should reference it. See `Webflow-plan.md`.*
@@ -26,8 +26,8 @@ Static site for the NYC FIRST District 13 STEM center, deployed as a **Webflow C
 **Pushing to `origin` alone does not deploy.** A change is only live once it is on `upstream main`.
 
 ```bash
-git -C /Users/avigoldman/d13 push upstream main
-git -C /Users/avigoldman/d13 push origin main     # keep the fork in sync
+git -C /Users/avigoldman/dev/d13 push upstream main
+git -C /Users/avigoldman/dev/d13 push origin main     # keep the fork in sync
 ```
 
 ## Contributing
@@ -170,8 +170,8 @@ The git repo is always the **parent directory**, regardless of which child direc
 **Always commit from the parent:**
 
 ```bash
-git -C /Users/avigoldman/d13 add <path>
-git -C /Users/avigoldman/d13 commit -m "..."
+git -C /Users/avigoldman/dev/d13 add <path>
+git -C /Users/avigoldman/dev/d13 commit -m "..."
 ```
 
 Do not ask for permission to commit from the parent directory — this is always correct.
@@ -179,8 +179,8 @@ Do not ask for permission to commit from the parent directory — this is always
 **Scope each commit to one child directory + one logical change.** Stage by path — never bare `git add .` that sweeps multiple apps into one commit:
 
 ```bash
-git -C /Users/avigoldman/d13 add laser-maker/         # one app only
-git -C /Users/avigoldman/d13 commit -m "feat(laser-maker): ..."
+git -C /Users/avigoldman/dev/d13 add laser-maker/         # one app only
+git -C /Users/avigoldman/dev/d13 commit -m "feat(laser-maker): ..."
 ```
 
 - Conventional prefix scoped to the area: `feat(arcade): …`, `docs(stem-stations): …`.

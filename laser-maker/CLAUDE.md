@@ -69,7 +69,7 @@ After updating CLAUDE.md, commit the change with a message like `docs: update CL
 
 ## Memory
 
-Auto-memory lives at `/Users/avigoldman/.claude/projects/-Users-avigoldman-d13/memory/`. When the user says "remember X" or "save this", write the appropriate memory file and update `MEMORY.md`. See the memory system instructions for file format details.
+Auto-memory lives at `/Users/avigoldman/.claude/projects/-Users-avigoldman-dev-d13/memory/`. When the user says "remember X" or "save this", write the appropriate memory file and update `MEMORY.md`. See the memory system instructions for file format details.
 CLAUDE.md and memory serve different purposes:
 - **Memory** — user preferences, feedback, project context, external references. Persists across all conversations.
 - **CLAUDE.md** — codebase architecture, feature implementation notes, key design decisions. Scoped to this project's code.
@@ -78,11 +78,11 @@ When the user asks to "write down key takeaways" or "note important aspects" of 
 
 ## Git & Commits
 
-The git repo root is `/Users/avigoldman/d13` — the parent directory that is published by Webflow Cloud (see the root `CLAUDE.md`). `laser-maker/` is a subdirectory inside it, not a separate repo. **Always run git commands from the parent directory**, even when Claude Code is invoked from within `laser-maker/`:
+The git repo root is `/Users/avigoldman/dev/d13` — the parent directory that is published by Webflow Cloud (see the root `CLAUDE.md`). `laser-maker/` is a subdirectory inside it, not a separate repo. **Always run git commands from the parent directory**, even when Claude Code is invoked from within `laser-maker/`:
 
 ```bash
-git -C /Users/avigoldman/d13 add laser-maker/modules/foo.js
-git -C /Users/avigoldman/d13 commit -m "..."
+git -C /Users/avigoldman/dev/d13 add laser-maker/modules/foo.js
+git -C /Users/avigoldman/dev/d13 commit -m "..."
 ```
 
 Scope each commit to one app + one logical change — stage `laser-maker/` paths only, never bare `git add .` that pulls in other apps. Use a conventional prefix (`feat(laser-maker): …`, `docs(laser-maker): …`) and `git status` to verify staging before committing.

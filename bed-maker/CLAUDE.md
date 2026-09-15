@@ -55,12 +55,12 @@ is planned separately. Reuses `laser-maker/modules/drive-upload.js` and the Apps
 
 ## Git & Commits
 
-Repo root is the parent `/Users/avigoldman/d13`. **Always commit
+Repo root is the parent `/Users/avigoldman/dev/d13`. **Always commit
 from the parent**, scope to `bed-maker/` only:
 
 ```bash
-git -C /Users/avigoldman/d13 add bed-maker/
-git -C /Users/avigoldman/d13 commit -m "feat(bed-maker): ..."
+git -C /Users/avigoldman/dev/d13 add bed-maker/
+git -C /Users/avigoldman/dev/d13 commit -m "feat(bed-maker): ..."
 ```
 
 Do not ask permission to commit from the parent — this is always correct.

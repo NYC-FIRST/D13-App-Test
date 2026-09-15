@@ -68,8 +68,8 @@ New approved rows go live on refresh — no rebuild, no redeploy.
 Repo root is the parent directory — `arcade/` is a plain subdir, not a separate repo. Always commit from the parent. Scope each commit to one app + one logical change; stage `arcade/` paths only, never bare `git add .`:
 
 ```bash
-git -C /Users/avigoldman/d13 add arcade/<path>
-git -C /Users/avigoldman/d13 commit -m "feat(arcade): ..."
+git -C /Users/avigoldman/dev/d13 add arcade/<path>
+git -C /Users/avigoldman/dev/d13 commit -m "feat(arcade): ..."
 ```
 
 Conventional prefix scoped to the area. Run `git status` to verify staging before committing. Don't ask permission to commit from the parent.

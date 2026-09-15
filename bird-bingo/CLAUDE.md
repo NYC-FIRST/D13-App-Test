@@ -9,8 +9,8 @@ The page is `bird-bingo.html`, here alongside its images. See the root `CLAUDE.m
 Repo root is the parent directory — `bird-bingo/` is a plain subdir, not a separate repo. Always commit from the parent. Scope each commit to one app + one logical change; stage `bird-bingo/` paths only, never bare `git add .`:
 
 ```bash
-git -C /Users/avigoldman/d13 add bird-bingo/<path>
-git -C /Users/avigoldman/d13 commit -m "feat(bird-bingo): ..."
+git -C /Users/avigoldman/dev/d13 add bird-bingo/<path>
+git -C /Users/avigoldman/dev/d13 commit -m "feat(bird-bingo): ..."
 ```
 
 Conventional prefix scoped to the area. Run `git status` to verify staging before committing. Don't ask permission to commit from the parent.
