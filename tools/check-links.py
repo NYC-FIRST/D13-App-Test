@@ -30,7 +30,9 @@ SKIP     = ("http://", "https://", "//", "data:", "mailto:", "tel:",
 def main():
     html = tracked("*.html")
     # The mount prefix is whatever precedes the repo-relative dir in <base>.
-    # The mount is the common prefix of every stamped base, i.e. the shortest.
+    # It is the longest path prefix common to every stamped base - not the
+    # shortest base, which is only the same thing while some page sits at the
+    # mount root. Every page now lives in its own directory, so none does.
     bases = []
     for f in html:
         m = BASE_RE.search(open(f, encoding="utf-8", errors="replace").read())
@@ -39,7 +41,8 @@ def main():
     if not bases:
         print("no <base> tags found - run tools/set-base.sh first", file=sys.stderr)
         return 2
-    mount = min(bases, key=len).rstrip("/")
+    common = os.path.commonprefix(bases)
+    mount = common[:common.rfind("/")] if "/" in common else ""
 
     # Short URLs served by a _redirects 200 proxy, mount prefix stripped.
     short_urls = set()

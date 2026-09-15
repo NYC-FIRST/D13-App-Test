@@ -64,8 +64,8 @@ Webflow site edge (x-wf-region)
 Any directory holding an `index.html` therefore loops: `/x → /x/ → /x → …`, surfacing as
 `ERR_TOO_MANY_REDIRECTS`. A page **not** named `index.html` is exempt.
 
-So each app's page is named after its directory and lives inside it — `arcade/arcade.html`,
-which serves at `/d13-app/arcade/arcade`. The short URL `/d13-app/arcade` is wired up by a
+So every page is named after its directory and lives inside it — `arcade/arcade.html`,
+which serves at `/d13-app/arcade/arcade`. No `.html` file sits at the repo root. The short URL `/d13-app/arcade` is wired up by a
 `_redirects` **200 proxy** rule, which serves that page in place with no redirect at all:
 
 ```

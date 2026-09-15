@@ -49,7 +49,7 @@ arcade/
   app.js  style.css  games.html  submit.html  dev-games.csv
 ```
 
-The repo root holds only site-level pages (`start.html`, `card-prompt-builder.html`) and shared assets (`styles.css`, `logo.svg`, the logos).
+**Every page lives in a directory** — there are no `.html` files at the repo root. The root holds only assets shared by more than one app (`styles.css`, `logo.svg`, `d13_logo.png`, `nyfc-d13_decal-logo.png`), the generated `_redirects`, config and docs. An asset used by a single page belongs in that page's directory.
 
 `arcade/arcade.html` serves at both `/d13-app/arcade/arcade` and the short URL `/d13-app/arcade`. The short URL is the real one — it returns a flat 200 with no redirect, via a `_redirects` 200 proxy rule.
 
@@ -90,8 +90,8 @@ Each child directory is a self-contained app or page, holding its own page and a
 
 | Directory | Page | URL | Purpose |
 |-----------|------|-----|---------|
-| — | `start.html` | `/d13-app` or `/d13-app/start` | Onboarding / entry page |
-| — | `card-prompt-builder.html` | `/d13-app/card-prompt-builder` | STEM card art prompt builder |
+| `start/` | `start.html` | `/d13-app` or `/d13-app/start` | Onboarding / entry page |
+| `card-prompt-builder/` | `card-prompt-builder.html` | `/d13-app/card-prompt-builder` | STEM card art prompt builder |
 | `laser-maker/` | `laser-maker.html` | `/d13-app/laser-maker` | Browser-based vector design tool for laser cutting |
 | `bed-maker/` | `bed-maker.html` | `/d13-app/bed-maker` | Merges a day's Laser Maker SVGs onto one 36×24 laser bed |
 | `arcade/` | `arcade.html` | `/d13-app/arcade` | 8-bit virtual arcade for student MakeCode games |
@@ -108,11 +108,10 @@ This is the recipe for *"create a new page"*, *"build an app that …"*, *"add a
 
 | Ask | Shape | Where |
 |---|---|---|
-| Anything with its own JS, CSS, images or data | **App** — its own directory | `<name>/<name>.html` + assets beside it |
-| A simple page that only uses the shared root `styles.css` | **Site-level page** | `<name>.html` at the repo root |
+| A new app or standalone page | **Its own directory** | `<name>/<name>.html` + its assets beside it |
 | Another screen *within* an existing app | **Page inside that app** | `<app>/<page>.html` |
 
-Default to an app directory when unsure — it costs nothing and keeps assets with their page.
+Every page gets a directory — even one that only uses shared root assets. An asset used by a single page lives in that page's directory; only assets shared by more than one page belong at the root.
 
 ### Steps for a new app
 

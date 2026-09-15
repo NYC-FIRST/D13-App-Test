@@ -27,7 +27,7 @@ arcade/
   app.js  style.css  games.html  submit.html  dev-games.csv
 ```
 
-The repo root holds only site-level pages (`start.html`, `card-prompt-builder.html`) and shared assets.
+There are no `.html` files at the repo root — it holds only assets shared by more than one app (`styles.css`, `logo.svg`, the logos), plus config and docs.
 
 Two generated things you should never edit by hand — both are rewritten by `tools/set-base.sh`:
 

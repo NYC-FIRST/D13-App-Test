@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <base href="/d13-app/"> <!-- set-base.sh -->
+  <base href="/d13-app/card-prompt-builder/"> <!-- set-base.sh -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prompt Builder</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 <body id="builder-page">
 <div class="wrap">
   <div class="card" id="builderCard">
     <div class="card-header">
-      <img class="card-logo" src="logo.svg" alt="NYC FIRST D13 STEM Center logo" aria-hidden="true">
+      <img class="card-logo" src="../logo.svg" alt="NYC FIRST D13 STEM Center logo" aria-hidden="true">
       <h2>STEM Card</br>Prompt Builder</h2>
     </div>
     <p class="helper">Build a strong prompt for the AI that you can use to generate an image in your character.</br>Fill in the blank and click the blue words to choose options. Read it all through and then click 'Done'.</p>
@@ -85,7 +85,7 @@
 
     <div class="actions">
       <!-- <button class="copy-btn" type="button" onclick="copyPrompt()">Copy Prompt</button> -->
-      <button class="back-btn" type="button" onclick="window.location.href='start'">Menu</button>
+      <button class="back-btn" type="button" onclick="window.location.href='../start'">Menu</button>
       <button class="copy-btn" type="button" onclick="showPromptCard()">Done</button>
       <span class="validation-msg" id="validationMsg"></span>
       <div class="actions-right">
