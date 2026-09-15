@@ -1,5 +1,9 @@
 # Game Gallery Implementation Plan
 
+> **Historical — do not execute as written.** Predates the Webflow Cloud migration. Git paths (`~/Desktop/nycfirst-d13.github.io`) and `index.html` filenames here are stale; see the root `CLAUDE.md` for the current layout, mount path and commit instructions.
+>
+> The `gh-pages` workflow this plan describes was never created, and the `game-gallery/` Next.js app it builds was dropped in commit `12e9ea8` — the arcade is plain static HTML under `arcade/`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the NYC FIRST D13 8-bit arcade game gallery — a Next.js static export that reads an approved-games Google Sheet CSV at runtime and shows a pixel-art grid plus a per-game iframe page.

@@ -1,5 +1,7 @@
 # Export Artboard Toggle Implementation Plan
 
+> **Historical — do not execute as written.** Predates the Webflow Cloud migration. Git paths (`~/Desktop/nycfirst-d13.github.io`) and `index.html` filenames here are stale; see the root `CLAUDE.md` for the current layout, mount path and commit instructions.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Add a pill toggle to the export dialog that switches SVG export between full artboard bounds (default) and tight ink bounds of the design content.

@@ -1,4 +1,6 @@
 # Game Gallery — Design Spec (v2)
+
+> **Historical — do not execute as written.** Predates the Webflow Cloud migration. Git paths (`~/Desktop/nycfirst-d13.github.io`) and `index.html` filenames here are stale; see the root `CLAUDE.md` for the current layout, mount path and commit instructions.
 **Date:** 2026-06-24
 **Status:** Approved
 
