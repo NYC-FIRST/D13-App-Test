@@ -1,18 +1,13 @@
-# TEMPORARY probe round 3.
-# Established: _redirects IS honored, and rule SOURCES must carry the mount
-# prefix (/d13-app/_canary2 -> /home 301 fired; the bare /_canary did not).
-# Round 2 also showed a prefixed source with a BARE target 404s rather than
-# looping — the rule matched but the target did not resolve. So this round
-# varies only the target.
+# TEMPORARY probe round 4 — confirm the exact production shape.
+# Round 3 established: _redirects works, sources AND targets carry the mount
+# prefix, and a 200-proxy fires — but a target ending in .html then eats the
+# worker's extension-strip 307 (so .../index.html becomes .../ and loops).
+# Targets must therefore be clean, extensionless URLs.
 
-# canary stays, proves the file is live each round
 /d13-app/_canary2   /home   301
 
-# a: target prefixed, pointing at a directory index
-/d13-app/_probe-a   /d13-app/_probe-a/index.html   200
+# the real shape: folder page named main.html, proxied from the short URL
+/d13-app/_probe-d   /d13-app/_probe-d/main   200
 
-# b: target prefixed, pointing at a NON-index file (is index.html the problem?)
-/d13-app/_probe-b   /d13-app/_probe-b/inner.html   200
-
-# c: target is an existing clean URL rather than a file path
-/d13-app/_probe-c   /d13-app/home   200
+# same idea against the existing nested probe
+/d13-app/_probe-b   /d13-app/_probe-b/inner   200
