@@ -11,7 +11,7 @@ on a projector for one session while a room of teachers types the URLs into thei
 and scans the QR.
 
 **It is not part of the main site.** Nothing links to it, it is not in any nav, and the site
-entry page (`/d13-app/home`) still serves the student STEM-card welcome page, untouched. It is a standalone
+entry page (`/d13-app/start`) still serves the student STEM-card onboarding page, untouched. It is a standalone
 utility that happens to live in the repo because that is where Webflow Cloud can serve it from.
 
 Treat it as **disposable by default**. After 2026-09-11 it is fine to delete the directory

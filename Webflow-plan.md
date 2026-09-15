@@ -16,7 +16,7 @@ reference for the platform itself.
 | **Mount path** | `/d13-app`, set in the Webflow dashboard, **not in this repo** |
 | **Live** | `https://www.nycfirst.org/d13-app` |
 | **Staging** | `https://nycfirst.webflow.io/d13-app` |
-| **Entry URL** | `/d13-app` (proxies to `/d13-app/home`) |
+| **Entry URL** | `/d13-app` (proxies to `/d13-app/start`) |
 
 A sibling Cloud app, `nyc-first-display-api-cloud` (from `NYC-FIRST/nyc-first-display-api-cloud`),
 is mounted at `/display-api` on the same site. Multiple apps per site at different mount
@@ -69,7 +69,7 @@ which serves at `/d13-app/arcade/arcade`. The short URL `/d13-app/arcade` is wir
 `_redirects` **200 proxy** rule, which serves that page in place with no redirect at all:
 
 ```
-/d13-app          /d13-app/home            200
+/d13-app          /d13-app/start           200
 /d13-app/arcade   /d13-app/arcade/arcade   200
 ```
 
@@ -85,7 +85,7 @@ which serves at `/d13-app/arcade/arcade`. The short URL `/d13-app/arcade` is wir
    form and loops again. This is why `index.html` remains banned even with `_redirects`
    available — no rule can rescue it.
 
-A side effect worth keeping: the app root `/d13-app` now proxies to `/d13-app/home` instead of
+A side effect worth keeping: the app root `/d13-app` now proxies to `/d13-app/start` instead of
 404ing, so the bare mount path is a valid URL to hand someone.
 
 `tools/serve-like-webflow.py` models both redirect layers *and* applies `_redirects` before
@@ -119,7 +119,7 @@ spell the mount path out by hand.
 
 ## 4. Known rough edges
 
-- **No site-wide nav.** No page links back to `home` except `card-prompt-builder.html`.
+- **No site-wide nav.** No page links back to `start` except `card-prompt-builder.html`.
 - **`.html` links cost a redirect.** `href="card-prompt-builder.html"` works but eats a 307 that
   strips the extension and changes the URL under the user. Query strings survive the strip.
 - **`hello-waves/micro.html`** has no `<head>`, so it is unstamped; nothing links it. Delete it
