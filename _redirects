@@ -1,16 +1,18 @@
-# TEMPORARY probe round 2. Round 1 (source+target both bare, and both
-# mount-prefixed) had no effect. Assets are likely keyed WITHOUT the mount
-# prefix even though the incoming request carries it, so test the mixed
-# spellings — plus a plain 301 canary to prove whether this file is parsed.
+# TEMPORARY probe round 3.
+# Established: _redirects IS honored, and rule SOURCES must carry the mount
+# prefix (/d13-app/_canary2 -> /home 301 fired; the bare /_canary did not).
+# Round 2 also showed a prefixed source with a BARE target 404s rather than
+# looping — the rule matched but the target did not resolve. So this round
+# varies only the target.
 
-# canary: does _redirects do ANYTHING? plain 301, both spellings
-/_canary            /home   301
+# canary stays, proves the file is live each round
 /d13-app/_canary2   /home   301
 
-# mixed 1: request path prefixed, asset target bare
-/d13-app/_probe-a   /_probe-a/index.html   200
+# a: target prefixed, pointing at a directory index
+/d13-app/_probe-a   /d13-app/_probe-a/index.html   200
 
-# mixed 2: request path bare, asset target prefixed
-/_probe-b   /d13-app/_probe-b/index.html   200
+# b: target prefixed, pointing at a NON-index file (is index.html the problem?)
+/d13-app/_probe-b   /d13-app/_probe-b/inner.html   200
 
-# _probe-c: still no rule — control
+# c: target is an existing clean URL rather than a file path
+/d13-app/_probe-c   /d13-app/home   200
