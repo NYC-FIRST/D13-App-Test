@@ -11,13 +11,17 @@ to fine-tune, and exports one clean 36×24 SVG that drops into the existing Illu
 Epilog pipeline.
 
 Sibling of `laser-maker/`. Same stack: **no build step, vanilla ES modules served over
-HTTP** (`npx live-server`). No runtime dependencies.
+HTTP**. No runtime dependencies.
+
+Served by Webflow Cloud at `/d13-app/bed-maker`. The page is `../bed-maker.html` at the
+**repo root**; this directory holds its modules and styles. Use `npm run serve` from the repo
+root — it models Webflow's redirect behavior, which `npx live-server` does not.
 
 ## Architecture
 
 | File | Role |
 |------|------|
-| `index.html` | Layout + all inspector markup. Loads `../laser-maker/styles.css` (shared design system) then `./styles.css`. |
+| `../bed-maker.html` | Layout + all inspector markup. Loads `../laser-maker/styles.css` (shared design system) then `./styles.css`. Both resolve through the page's `<base href="/d13-app/bed-maker/">`, not through the file's own location. |
 | `styles.css` | Page-specific only: `.bed`, `.bed-stage`, `.piece`, drop-hint. |
 | `app.js` | Entry: wires inspector controls, inits modules, status bar. |
 | `modules/state.js` | Plain store (`state`, `subscribe`, `render`) + `PX_PER_INCH`/`inToPx`/`pxToIn`. No undo. |
@@ -51,12 +55,12 @@ is planned separately. Reuses `laser-maker/modules/drive-upload.js` and the Apps
 
 ## Git & Commits
 
-Repo root is the parent `/Users/avigoldman/Desktop/nycfirst-d13.github.io`. **Always commit
+Repo root is the parent `/Users/avigoldman/d13`. **Always commit
 from the parent**, scope to `bed-maker/` only:
 
 ```bash
-git -C /Users/avigoldman/Desktop/nycfirst-d13.github.io add bed-maker/
-git -C /Users/avigoldman/Desktop/nycfirst-d13.github.io commit -m "feat(bed-maker): ..."
+git -C /Users/avigoldman/d13 add bed-maker/
+git -C /Users/avigoldman/d13 commit -m "feat(bed-maker): ..."
 ```
 
 Do not ask permission to commit from the parent — this is always correct.
