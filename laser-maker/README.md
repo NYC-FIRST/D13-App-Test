@@ -112,15 +112,17 @@ The **1 : 1** button resets zoom to 100%, where one CSS inch equals one design i
 
 ## Running the App
 
-No build, no backend. Just serve it over HTTP:
+No build, no backend. Serve it from the **repo root** with the project's own server, which
+models the Webflow Cloud mount and its redirects:
 
 ```bash
-npx live-server
+npm run serve      # then open http://127.0.0.1:8787/d13-app/laser-maker
 ```
 
-Or any other static server (`npx serve`, Python's `http.server`, etc.).
+Any other static server works for quick checks, but only this one reproduces the mount path
+and trailing-slash behavior the deployed site has.
 
-> Module scripts require an `http://` origin. Opening `index.html` directly from disk will fail due to CORS rules on ES modules.
+> Module scripts require an `http://` origin. Opening the page directly from disk will fail due to CORS rules on ES modules.
 
 ---
 
@@ -130,7 +132,7 @@ Modular ES modules. No frameworks. `paper.js` is the only runtime dependency, us
 
 ```
 laser-maker/
-├── index.html             # shell, panels, toolbar
+├── ../laser-maker.html    # shell, panels, toolbar (lives at the repo root)
 ├── styles.css             # design system
 ├── app.js                 # entry; wires modules
 ├── modules/
@@ -170,7 +172,7 @@ A single store (in `state.js`) holds everything: artboard size, viewport, shapes
 
 1. Create a handler with any of `onActivate / onDeactivate / onDown / onMove / onUp`.
 2. Register it: `tools.register('myTool', handler)`.
-3. Add a button in `index.html` with `data-tool="myTool"` and a CSS mask icon.
+3. Add a button in `../laser-maker.html` with `data-tool="myTool"` and a CSS mask icon.
 
 ### Adding a new shape type
 

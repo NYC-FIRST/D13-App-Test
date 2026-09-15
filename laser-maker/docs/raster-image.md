@@ -22,7 +22,7 @@ Setting an image to **Etch** opens a dedicated appearance panel (`#appearance-im
 
 ## Trace to vector (raster → paths)
 
-The Raster Etch panel's **Trace to vector** button (`#ie-trace`, handler in `image-etch-panel.js`) converts the *processed* etch pixels into editable vector `path` shapes via **imagetracerjs** (CDN script in `index.html`, exposes global `ImageTracer`).
+The Raster Etch panel's **Trace to vector** button (`#ie-trace`, handler in `image-etch-panel.js`) converts the *processed* etch pixels into editable vector `path` shapes via **imagetracerjs** (CDN script in `../../laser-maker.html`, exposes global `ImageTracer`).
 
 - **Source** is `attrs.etchHref` (the baked B&W result — what-you-see-is-what-you-trace), falling back to `attrs.href`. So all etch adjustments (threshold/halftone/contrast…) flow through into the trace.
 - **Trace:** the source is drawn to a canvas (longest side capped at `TRACE_MAX = 1000` px for speed) → `ImageTracer.imagedataToSVG` with a fixed 2-color black/white `pal`. Near-white background paths are dropped by luminance; only dark regions are kept.

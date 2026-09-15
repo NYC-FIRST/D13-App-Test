@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Deployment
+
+Served by Webflow Cloud at `/d13-app/laser-maker`. The page is `../laser-maker.html` at the
+**repo root**; this directory holds `app.js`, `styles.css`, `modules/`, `assets/` and `docs/`.
+Every reference resolves through the page's `<base href="/d13-app/laser-maker/">`. See the root
+`CLAUDE.md` for the layout rule and the `<base href>` contract.
+
 ## Purpose & Audience
 
 Laser Maker is a browser-based vector design tool built for elementary and middle school students at an NYC FIRST STEM center. Students use it to design parts and projects for laser cutting — specifically the **Epilog Fusion Edge 36**.
@@ -62,8 +69,7 @@ After updating CLAUDE.md, commit the change with a message like `docs: update CL
 
 ## Memory
 
-Auto-memory lives at `/Users/avigoldman/.claude/projects/-Users-avigoldman-Desktop-nycfirst-d13-github-io/memory/`. When the user says "remember X" or "save this", write the appropriate memory file and update `MEMORY.md`. See the memory system instructions for file format details.
-Ca
+Auto-memory lives at `/Users/avigoldman/.claude/projects/-Users-avigoldman-d13/memory/`. When the user says "remember X" or "save this", write the appropriate memory file and update `MEMORY.md`. See the memory system instructions for file format details.
 CLAUDE.md and memory serve different purposes:
 - **Memory** — user preferences, feedback, project context, external references. Persists across all conversations.
 - **CLAUDE.md** — codebase architecture, feature implementation notes, key design decisions. Scoped to this project's code.
@@ -72,11 +78,11 @@ When the user asks to "write down key takeaways" or "note important aspects" of 
 
 ## Git & Commits
 
-The git repo root is `/Users/avigoldman/Desktop/nycfirst-d13.github.io` — the parent directory that serves the GitHub Pages site. `laser-maker/` is a subdirectory inside it, not a separate repo. **Always run git commands from the parent directory**, even when Claude Code is invoked from within `laser-maker/`:
+The git repo root is `/Users/avigoldman/d13` — the parent directory that is published by Webflow Cloud (see the root `CLAUDE.md`). `laser-maker/` is a subdirectory inside it, not a separate repo. **Always run git commands from the parent directory**, even when Claude Code is invoked from within `laser-maker/`:
 
 ```bash
-git -C /Users/avigoldman/Desktop/nycfirst-d13.github.io add laser-maker/modules/foo.js
-git -C /Users/avigoldman/Desktop/nycfirst-d13.github.io commit -m "..."
+git -C /Users/avigoldman/d13 add laser-maker/modules/foo.js
+git -C /Users/avigoldman/d13 commit -m "..."
 ```
 
 Scope each commit to one app + one logical change — stage `laser-maker/` paths only, never bare `git add .` that pulls in other apps. Use a conventional prefix (`feat(laser-maker): …`, `docs(laser-maker): …`) and `git status` to verify staging before committing.
@@ -209,7 +215,7 @@ Use the right class for each parameter type. Never mix them.
 
 ### Inspector Panel Order
 
-Fixed order in `index.html`:
+Fixed order in `../laser-maker.html`:
 1. **Transform** — always visible
 2. **Process** — always visible
 3. **Shape/tool-specific panels** (conditional, `display:none` by default) — e.g. Text, Star, Expand SVG
