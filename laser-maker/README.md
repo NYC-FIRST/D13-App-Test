@@ -132,7 +132,7 @@ Modular ES modules. No frameworks. `paper.js` is the only runtime dependency, us
 
 ```
 laser-maker/
-├── ../laser-maker.html    # shell, panels, toolbar (lives at the repo root)
+├── laser-maker.html       # shell, panels, toolbar
 ├── styles.css             # design system
 ├── app.js                 # entry; wires modules
 ├── modules/
@@ -172,7 +172,7 @@ A single store (in `state.js`) holds everything: artboard size, viewport, shapes
 
 1. Create a handler with any of `onActivate / onDeactivate / onDown / onMove / onUp`.
 2. Register it: `tools.register('myTool', handler)`.
-3. Add a button in `../laser-maker.html` with `data-tool="myTool"` and a CSS mask icon.
+3. Add a button in `laser-maker.html` with `data-tool="myTool"` and a CSS mask icon.
 
 ### Adding a new shape type
 

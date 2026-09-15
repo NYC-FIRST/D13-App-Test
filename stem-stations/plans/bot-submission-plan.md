@@ -1,7 +1,7 @@
 # STEM Stations — submission backend, owned by the D13 automation account
 
 Goal: submissions should be written by a shared **automation identity**, not
-tied to a personal account. The form (`../stem-stations.html`) POSTs FormData; the backend
+tied to a personal account. The form (`../stem-stations/stem-stations.html`) POSTs FormData; the backend
 appends a row (`active=FALSE`), saves any screenshot, and emails staff.
 
 > **Deployed reality:** this went with **Option A**, owned by
@@ -16,7 +16,7 @@ behavior, near-zero new infra. **Option B** (Cloud Function + service account) i
 "true" GCP bot, more moving parts, only worth it if you need to decouple from
 Workspace or expect big scale.
 
-**Hard rule for both:** no private key / secret ever goes in `../stem-stations.html` — it is a
+**Hard rule for both:** no private key / secret ever goes in `../stem-stations/stem-stations.html` — it is a
 public static file on Webflow Cloud. Secrets live only in the backend.
 
 ---
@@ -38,7 +38,7 @@ Reuses the existing `submit.gs` unchanged. Only the *owner* and deployment chang
 5. **Deploy** (as `d13-internal@`): New deployment → Web app →
    - Execute as: **Me** (= `d13-internal@`)
    - Who has access: **Anyone**
-6. **Wire the URL:** copy the `/exec` URL into `SUBMIT_URL` in `../stem-stations.html`, commit, push to `upstream main`.
+6. **Wire the URL:** copy the `/exec` URL into `SUBMIT_URL` in `../stem-stations/stem-stations.html`, commit, push to `upstream main`.
 7. **Verify:** open the `/exec` URL in an incognito window — must load with **no login
    prompt**. Then submit a test station from the site → confirm `active=FALSE` row,
    screenshot link, and the staff email (now sent *from* `d13-internal@`).

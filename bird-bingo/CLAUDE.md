@@ -2,7 +2,7 @@
 
 Bird bingo game — a child app of the NYC FIRST D13 site, served by Webflow Cloud at `/d13-app/bird-bingo`.
 
-The page is `../bird-bingo.html` at the **repo root**; this directory holds only its images. See the root `CLAUDE.md` for the layout rule and the `<base href>` contract.
+The page is `bird-bingo.html`, here alongside its images. See the root `CLAUDE.md` for the layout rule and the `<base href>` contract.
 
 ## Git & Commits
 

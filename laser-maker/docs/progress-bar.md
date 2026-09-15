@@ -1,6 +1,6 @@
 # Progress Bar
 
-`progress.js` is a **singleton floating progress bar** for any operation slow enough to feel laggy. One bar at a time, anchored bottom-center above the status bar (same lane as the toast). The host element `#progress` lives in `../../laser-maker.html`; styling is the `.progress*` block in `styles.css` (uses design tokens — `--blue`→`--accent-hi` gradient fill, `--sh-3`, `--r-md`).
+`progress.js` is a **singleton floating progress bar** for any operation slow enough to feel laggy. One bar at a time, anchored bottom-center above the status bar (same lane as the toast). The host element `#progress` lives in `../laser-maker.html`; styling is the `.progress*` block in `styles.css` (uses design tokens — `--blue`→`--accent-hi` gradient fill, `--sh-3`, `--r-md`).
 
 **Two text slots:** `label` (operation name, top-left, set once in `show()`) and `detail` (a line *under* the track, `#progress-detail`, describing the current step — update it as phases change). The `%` sits top-right.
 

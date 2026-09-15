@@ -82,7 +82,7 @@ APPROVE  (staff, in the Sheet)
   → LIVE on next gallery load (~1 min, no rebuild)
 
 SERVE  (gallery, unchanged client-side except source + filter)
-  arcade.html grid: gviz CSV → parse → filter publish-gate → cards
+  arcade/arcade.html grid: gviz CSV → parse → filter publish-gate → cards
   games.html?id=: gviz CSV → findGame → iframe d13_url
 ```
 

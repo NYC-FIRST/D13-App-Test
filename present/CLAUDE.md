@@ -28,14 +28,13 @@ URL (and its QR — see below), the title, and the hero's `/d13-app/present` pat
 
 ## Stack
 
-Single `../present.html` at the **repo root** (this directory holds only the QR). Served by
-Webflow Cloud at `/d13-app/present`. No build step; the only JS is the few lines at the end that measure the
+Single `present.html`, here alongside its QR. Served by Webflow Cloud at `/d13-app/present`. No build step; the only JS is the few lines at the end that measure the
 URLs for the type-in animation. **Self-contained — it deliberately does not load
 `../styles.css`**; that sheet's Inter + blue gradient fights the look below.
 
 | File | Role |
 |------|------|
-| `../present.html` | The whole page |
+| `present.html` | The whole page |
 | `feedback-qr.svg` | QR for the feedback short URL. Generated, not hand-edited — see below |
 
 ## Design system
@@ -108,7 +107,7 @@ own `--ease-expo`; the shape is its `translateY` fade-up.
 ## Regenerating the QR
 
 The QR encodes the feedback short URL verbatim. If that URL changes, update **both** the
-`.fb` anchor's href and its `.slug` text in `../present.html`, then regenerate:
+`.fb` anchor's href and its `.slug` text in `present.html`, then regenerate:
 
 ```bash
 python3 -m venv /tmp/qrvenv && /tmp/qrvenv/bin/pip install -q segno opencv-python-headless

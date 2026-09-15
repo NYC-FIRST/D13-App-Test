@@ -13,15 +13,15 @@ Epilog pipeline.
 Sibling of `laser-maker/`. Same stack: **no build step, vanilla ES modules served over
 HTTP**. No runtime dependencies.
 
-Served by Webflow Cloud at `/d13-app/bed-maker`. The page is `../bed-maker.html` at the
-**repo root**; this directory holds its modules and styles. Use `npm run serve` from the repo
-root — it models Webflow's redirect behavior, which `npx live-server` does not.
+Served by Webflow Cloud at `/d13-app/bed-maker`. The page is `bed-maker.html`, here
+alongside its modules and styles. Use `npm run serve` from the repo root — it models
+Webflow's redirects and `_redirects` rules, which `npx live-server` does not.
 
 ## Architecture
 
 | File | Role |
 |------|------|
-| `../bed-maker.html` | Layout + all inspector markup. Loads `../laser-maker/styles.css` (shared design system) then `./styles.css`. Both resolve through the page's `<base href="/d13-app/bed-maker/">`, not through the file's own location. |
+| `bed-maker.html` | Layout + all inspector markup. Loads `../laser-maker/styles.css` (shared design system) then `./styles.css`. Both resolve through the page's `<base href="/d13-app/bed-maker/">`, not through the file's own location. |
 | `styles.css` | Page-specific only: `.bed`, `.bed-stage`, `.piece`, drop-hint. |
 | `app.js` | Entry: wires inspector controls, inits modules, status bar. |
 | `modules/state.js` | Plain store (`state`, `subscribe`, `render`) + `PX_PER_INCH`/`inToPx`/`pxToIn`. No undo. |

@@ -8,11 +8,11 @@ NYC FIRST District 13 arcade — 8-bit virtual arcade for student MakeCode Arcad
 
 Plain static HTML/CSS/JS. **No build step, no framework, no node_modules.** Files are served as-is by Webflow Cloud at `/d13-app/arcade`. Edit and commit directly.
 
-The grid page is `../arcade.html` at the **repo root** — it serves at `/d13-app/arcade` and owns this directory, which holds its assets. See the root `CLAUDE.md` for why no `index.html` may exist here.
+The grid page is `arcade.html`, here in this directory alongside its assets. It serves at the short URL `/d13-app/arcade` (a `_redirects` 200 proxy, no redirect) and also at `/d13-app/arcade/arcade`. See the root `CLAUDE.md` for why it is not named `index.html`.
 
 | File | Role |
 |------|------|
-| `../arcade.html` | Grid page — fetches CSV, renders cards, loading/error/empty states, XP footer |
+| `arcade.html` | Grid page — fetches CSV, renders cards, loading/error/empty states, XP footer |
 | `games.html` | Detail page — reads `?id=`, iframes the game, shows provenance |
 | `app.js` | Shared data layer — CSV fetch/parse, sort-newest, `findGame`, thumbnail URLs |
 | `style.css` | 8-bit arcade theme, minimal black & white (Press Start 2P + VT323, Google Fonts) |
@@ -56,7 +56,7 @@ New approved rows go live on refresh — no rebuild, no redeploy.
 
 ## Routes
 
-- `/d13-app/arcade` → `../arcade.html` — game grid
+- `/d13-app/arcade` → `arcade.html` — game grid
 - `/d13-app/arcade/games?id=<slug>` → `games.html` — single game; reads `?id=`, iframes `d13_url`. A link written as `games.html?id=…` works but eats a 307 that strips the `.html`.
 
 ## Testing

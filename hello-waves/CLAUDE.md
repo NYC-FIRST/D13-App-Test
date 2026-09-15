@@ -2,7 +2,7 @@
 
 Hello waves app — a child app of the NYC FIRST D13 site, served by Webflow Cloud at `/d13-app/hello-waves`.
 
-The page is `../hello-waves.html` at the **repo root**; this directory holds only its images. See the root `CLAUDE.md` for the layout rule and the `<base href>` contract.
+The page is `hello-waves.html`, here alongside its images. See the root `CLAUDE.md` for the layout rule and the `<base href>` contract.
 
 `micro.html` is an unused embed snippet (a bare MakeCode iframe, no `<head>`). Nothing links it and `set-base.sh` skips it. Delete it or give it a `<head>` if it is ever wanted as a real page.
 

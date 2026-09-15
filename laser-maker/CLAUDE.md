@@ -4,8 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Deployment
 
-Served by Webflow Cloud at `/d13-app/laser-maker`. The page is `../laser-maker.html` at the
-**repo root**; this directory holds `app.js`, `styles.css`, `modules/`, `assets/` and `docs/`.
+Served by Webflow Cloud at `/d13-app/laser-maker`. The page is `laser-maker.html`, here
+alongside `app.js`, `styles.css`, `modules/`, `assets/` and `docs/`.
 Every reference resolves through the page's `<base href="/d13-app/laser-maker/">`. See the root
 `CLAUDE.md` for the layout rule and the `<base href>` contract.
 
@@ -215,7 +215,7 @@ Use the right class for each parameter type. Never mix them.
 
 ### Inspector Panel Order
 
-Fixed order in `../laser-maker.html`:
+Fixed order in `laser-maker.html`:
 1. **Transform** — always visible
 2. **Process** — always visible
 3. **Shape/tool-specific panels** (conditional, `display:none` by default) — e.g. Text, Star, Expand SVG
