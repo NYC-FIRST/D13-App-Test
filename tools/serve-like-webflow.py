@@ -27,9 +27,45 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MOUNT = "/d13-app"
 
 
+def rules():
+    """Parse _redirects into {source: (target, code)}, mount prefix stripped.
+
+    Cloudflare applies these before asset routing, so a 200 rule serves the
+    target's asset at the source URL with no redirect. Verified against the
+    live site - see Webflow-plan.md.
+    """
+    out = {}
+    path = os.path.join(ROOT, "_redirects")
+    if not os.path.isfile(path):
+        return out
+    for line in open(path, encoding="utf-8"):
+        line = line.split("#")[0].split()
+        if len(line) < 2:
+            continue
+        src, dst = line[0], line[1]
+        code = int(line[2]) if len(line) > 2 else 302
+        if MOUNT:
+            if not src.startswith(MOUNT):
+                continue          # a bare source never matches under a mount
+            src = src[len(MOUNT):] or "/"
+            dst = dst[len(MOUNT):] if dst.startswith(MOUNT) else dst
+        out[src.rstrip("/") or "/"] = (dst or "/", code)
+    return out
+
+
 def resolve(rel):
     """Return ('serve', diskpath) | ('redirect', code, newpath) | ('404', None)."""
     disk = posixpath.normpath(rel).lstrip("/")
+
+    # _redirects runs first, before any asset routing.
+    rule = rules().get(rel.rstrip("/") or "/")
+    if rule:
+        dst, code = rule
+        if code != 200:
+            return ("redirect", code, dst)
+        # A 200 proxy serves the target's asset in place. The target must be
+        # extensionless: a .html target picks up the extension-strip 307 below.
+        return resolve(dst) if dst != rel else ("404", None)
 
     # Site edge: strip a trailing slash (never at the mount root).
     if rel.endswith("/") and rel != "/":

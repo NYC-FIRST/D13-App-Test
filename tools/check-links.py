@@ -41,6 +41,14 @@ def main():
         return 2
     mount = min(bases, key=len).rstrip("/")
 
+    # Short URLs served by a _redirects 200 proxy, mount prefix stripped.
+    short_urls = set()
+    if os.path.isfile("_redirects"):
+        for line in open("_redirects", encoding="utf-8"):
+            parts = line.split("#")[0].split()
+            if len(parts) >= 3 and parts[2] == "200" and parts[0].startswith(mount):
+                short_urls.add(parts[0][len(mount):].rstrip("/") or "/")
+
     problems, checked, no_base = [], 0, []
 
     def check(origin, ref, kind, doc):
@@ -53,6 +61,10 @@ def main():
             return
         rel = unquote(resolved[len(mount):].lstrip("/"))
         checked += 1
+        # A short URL wired up by a _redirects 200 proxy resolves to whatever
+        # that rule targets, not to a file of its own name.
+        if "/" + rel.rstrip("/") in short_urls or (rel == "" and "/" in short_urls):
+            return
         if rel == "" or rel.endswith("/"):
             rel += "index.html"
         # A bare /foo may be served by foo.html or foo/index.html.
