@@ -149,15 +149,35 @@ the same edit by hand.
 
 ## 6. Next: `d13.nycfirst.org`
 
-Goal: serve the app at a subdomain instead of a path under the marketing apex. Three routes,
-in the order they should be attempted.
+Goal: serve the app from the subdomain instead of a path under the marketing apex.
 
-**Constraint from the org side:** the apex `nycfirst.org` is on GoDaddy DNS and should stay
-there. Proxying only the subdomain through Cloudflare is not cheap: Cloudflare's docs say
-*"Subdomain setup is only available for Enterprise accounts"* (delegating `d13.nycfirst.org` to
-Cloudflare via NS records), and a partial/CNAME setup is *"only available to customers on a
-Business or Enterprise plan"*. The free path means moving the entire apex zone to Cloudflare
-nameservers — off the table.
+### 6.0 Where this actually stands (probed 2026-09-15)
+
+**The subdomain is already connected to the Webflow site, with TLS issued.** It is not a
+greenfield DNS problem:
+
+```
+d13.nycfirst.org  ->  CNAME cdn.webflow.com  ->  198.202.211.1
+HTTP 404 · x-wf-region: us-east-1 · TLS cert CN=d13.nycfirst.org (Google Trust Services)
+```
+
+Webflow's edge answers and the certificate exists. The 404 means only that **the site has not
+been published to that domain** — a checkbox at publish time, not a DNS change.
+
+That matters, because Cloud app mounts are site-level: once the site is published to
+`d13.nycfirst.org`, the app should answer at `d13.nycfirst.org/d13-app` **with no proxy at
+all**. Everything below is only about getting it to the subdomain *root*.
+
+- [ ] Publish the site to `d13.nycfirst.org`, then probe `d13.nycfirst.org/d13-app`.
+
+### 6.1 Constraint from the org side
+
+The apex `nycfirst.org` is on GoDaddy DNS and stays there. Proxying only the subdomain through
+Cloudflare is not cheap: *"Subdomain setup is only available for Enterprise accounts"*
+(delegating `d13.nycfirst.org` via NS records), and a partial/CNAME setup is *"only available to
+customers on a Business or Enterprise plan"*. The free path means moving the entire apex zone to
+Cloudflare nameservers — off the table. Cloudflare **Pages** is out for the same reason as
+Workers: its custom domains require the zone to be in the Cloudflare account.
 
 ### A. Webflow Cloud standalone app — ask first
 
@@ -169,6 +189,8 @@ hosted on its own subdomain."* That removes the mount path entirely — re-stamp
 **Unconfirmed:** the announcement names Next.js and Astro; nothing in the docs says whether a
 `static` app is eligible. One support ticket settles it, and should also carry the question open
 since the start of this migration: **is a `/` mount path permitted on a site-attached app?**
+(Note a `/` mount on the *shared* site would hand the app the whole marketing domain, so that
+question only matters for a site dedicated to D13.)
 
 - [ ] Ask Webflow support both questions.
 
@@ -176,24 +198,36 @@ since the start of this migration: **is a `/` mount path permitted on a site-att
 
 A second Webflow site with the app mounted at its root. DNS is the standard Webflow subdomain
 flow at GoDaddy: `CNAME d13 → proxy-ssl.webflow.com` plus a one-time TXT verification record.
-No proxy, no Cloudflare, nothing extra to own. Costs another site + hosting plan, and still
-depends on a `/` mount being permitted.
+No proxy, nothing extra to own. Costs another site + hosting plan, and still depends on a `/`
+mount being permitted.
 
 ### C. Reverse proxy at the subdomain
 
-Since Cloudflare's subdomain-only options are Business+, the same shape is free from any host
-that needs only a CNAME — e.g. a one-file Vercel or Netlify project on `d13.nycfirst.org`
-rewriting `/*` → `https://www.nycfirst.org/d13-app/*`. GoDaddy keeps the zone; one record; TLS
-automatic.
+A $0 proxy that takes a custom hostname while GoDaddy stays authoritative does exist — Netlify
+or Vercel, either of which attaches `d13.nycfirst.org` by CNAME with automatic TLS and rewrites
+by path (Netlify `_redirects` with a `200` to an external URL; Vercel `rewrites`). One record at
+GoDaddy, no zone move.
 
-Worth knowing before building it: **if the proxy adds the `/d13-app` prefix itself, re-stamp the
-pages with `tools/set-base.sh /`** — `<base href="/">` plus the proxy's prefix resolves
-correctly, and no response-body rewriting is needed. The tradeoff is that direct
-`www.nycfirst.org/d13-app/...` access then breaks, so this is a cutover, not dual-serve.
+Two things to get right:
 
-**Sequencing:** A's answer decides everything. If `static` is eligible for a standalone domain,
-take it — one form and a re-stamp. If not, B (money, zero moving parts) vs C (free, one more
-service to own). Do not build C before asking.
+- **Fetch a dedicated origin hostname, not the public one.** Add something like
+  `wf-origin.nycfirst.org` to the Webflow site and have the proxy fetch
+  `wf-origin.nycfirst.org/d13-app/*`. Proxying `d13.nycfirst.org` back to itself loops, and
+  Webflow's own reverse-proxy guidance advises against proxying the `webflow.io` staging host.
+- **Re-stamp the pages.** If the proxy adds the `/d13-app` prefix, run `tools/set-base.sh /` so
+  pages carry `<base href="/">`; the proxy's prefix then resolves correctly and no response-body
+  rewriting is needed. Without this the browser asks for `/d13-app/styles.css`, which the proxy
+  maps to `/d13-app/d13-app/styles.css` and 404s. The tradeoff is that direct
+  `www.nycfirst.org/d13-app/...` access then breaks — this is a cutover, not dual-serve.
+
+### Sequencing
+
+1. Publish to the subdomain (§6.0). Free, reversible, and may be enough if
+   `d13.nycfirst.org/d13-app` is an acceptable URL.
+2. Ask Webflow support (A). A yes makes the root free and deletes the whole proxy branch.
+3. Only then choose B (money, zero moving parts) or C (free, one more service to own).
+
+Do not migrate any DNS or buy anything before steps 1 and 2 answer.
 
 ### Also open
 
