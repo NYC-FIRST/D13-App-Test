@@ -15,7 +15,10 @@
 # Usage
 #   tools/set-base.sh /d13-app    # mounted at nycfirst.org/d13-app
 #   tools/set-base.sh /           # mounted at a domain/subdomain root
-#   tools/set-base.sh --check     # verify stamps match nothing changed
+#
+# To verify rather than change, re-run and let git answer — the script is
+# idempotent, so a clean diff means every stamp is already correct:
+#   tools/set-base.sh /d13-app && git diff --exit-code -- '*.html'
 #
 # Idempotent: re-running replaces the existing tag rather than adding another.
 
@@ -23,7 +26,9 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 MOUNT="${1:-}"
-if [ -z "$MOUNT" ]; then
+if [ -z "$MOUNT" ] || [ "${MOUNT#-}" != "$MOUNT" ]; then
+  # A leading dash is a flag, not a mount path. Without this guard a stray
+  # --check would be stamped verbatim as <base href="/--check/">.
   echo "usage: tools/set-base.sh <mount-path>   e.g. /d13-app  or  /" >&2
   exit 2
 fi

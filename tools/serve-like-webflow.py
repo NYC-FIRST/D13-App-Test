@@ -2,7 +2,8 @@
 """Serve the repo the way Webflow Cloud actually behaves, including the
 redirect loop, so breakage is reproducible locally.
 
-Observed 2026-09-11 against www.nycfirst.org/d13-avi. TWO layers act:
+Observed 2026-09-11 against www.nycfirst.org (mount /d13-avi at the time; the
+app now mounts at /d13-app — the behavior is the same). TWO layers act:
 
   Webflow Cloud worker (wf-app-prod.cosmic.webflow.services)
     /x.html          307 -> /x           (strip the extension)
@@ -16,14 +17,14 @@ Those two rules collide on any directory index: /x -> /x/ -> /x -> ... which
 is the ERR_TOO_MANY_REDIRECTS users see. This server reproduces that, and
 reports LOOP when a path cycles, so the fix can be verified before deploying.
 
-Usage:  tools/serve-like-webflow.py [--mount /d13-avi] [--port 8787]
+Usage:  tools/serve-like-webflow.py [--mount /d13-app] [--port 8787] [--audit]
 """
 import argparse, os, posixpath, sys
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import unquote, urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MOUNT = "/d13-avi"
+MOUNT = "/d13-app"
 
 
 def resolve(rel):
@@ -121,7 +122,7 @@ def audit():
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--mount", default="/d13-avi")
+    ap.add_argument("--mount", default="/d13-app")
     ap.add_argument("--port", type=int, default=8787)
     ap.add_argument("--audit", action="store_true",
                     help="report looping page URLs and exit")
