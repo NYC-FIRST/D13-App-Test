@@ -11,8 +11,8 @@ on a projector for one session while a room of teachers types the URLs into thei
 and scans the QR.
 
 **It is not part of the main site.** Nothing links to it, it is not in any nav, and the site
-root (`/`) still serves the student STEM-card welcome page, untouched. It is a standalone
-utility that happens to live in the repo because that is where GitHub Pages can serve it from.
+entry page (`/d13-app/home`) still serves the student STEM-card welcome page, untouched. It is a standalone
+utility that happens to live in the repo because that is where Webflow Cloud can serve it from.
 
 Treat it as **disposable by default**. After 2026-09-11 it is fine to delete the directory
 outright — no other page imports from it and removing it breaks nothing. Two things make it
@@ -24,17 +24,18 @@ worth keeping instead:
 - The app list and blurbs are current as of 2026-09-10 and would need re-checking before reuse.
 
 If it does get reused, the first things to change are the three app cards, the feedback short
-URL (and its QR — see below), the title, and the hero's `/present` path.
+URL (and its QR — see below), the title, and the hero's `/d13-app/present` path.
 
 ## Stack
 
-Single `index.html`. No build step; the only JS is the few lines at the end that measure the
+Single `../present.html` at the **repo root** (this directory holds only the QR). Served by
+Webflow Cloud at `/d13-app/present`. No build step; the only JS is the few lines at the end that measure the
 URLs for the type-in animation. **Self-contained — it deliberately does not load
 `../styles.css`**; that sheet's Inter + blue gradient fights the look below.
 
 | File | Role |
 |------|------|
-| `index.html` | The whole page |
+| `../present.html` | The whole page |
 | `feedback-qr.svg` | QR for the feedback short URL. Generated, not hand-edited — see below |
 
 ## Design system
@@ -51,7 +52,7 @@ something needs a new value, take it from those two files.
 
 ## Rules
 
-- **`nycfirst-d13.github.io/present` is the largest thing on the page**, above the red rule. It is
+- **`nycfirst.org/d13-app/present` is the largest thing on the page**, above the red rule. It is
   this page's own address, so the room can pull it up. Nothing labels or explains it, and it must
   stay on one line — if the path grows, lower the clamp.
 - **Every URL splits host from path the same way:** host in ink, path in `--blue` via `.seg`.
@@ -107,7 +108,7 @@ own `--ease-expo`; the shape is its `translateY` fade-up.
 ## Regenerating the QR
 
 The QR encodes the feedback short URL verbatim. If that URL changes, update **both** the
-`.fb` anchor's href and its `.slug` text in `index.html`, then regenerate:
+`.fb` anchor's href and its `.slug` text in `../present.html`, then regenerate:
 
 ```bash
 python3 -m venv /tmp/qrvenv && /tmp/qrvenv/bin/pip install -q segno opencv-python-headless
@@ -120,7 +121,8 @@ Error correction is `H` so the code still scans from across a room or off a proj
 Then confirm it still decodes **as rendered**, dot grid and all, rather than trusting the file:
 
 ```bash
-npx playwright-cli goto http://localhost:8777/present/
+npm run serve   # then, in another shell:
+npx playwright-cli goto http://127.0.0.1:8787/d13-app/present
 npx playwright-cli screenshot ".fb .qr" --filename=/tmp/qr.png
 /tmp/qrvenv/bin/python -c "import cv2; print(cv2.QRCodeDetector().detectAndDecode(cv2.imread('/tmp/qr.png'))[0])"
 ```
@@ -130,8 +132,8 @@ npx playwright-cli screenshot ".fb .qr" --filename=/tmp/qr.png
 The git repo is the **parent directory**. Always commit from there:
 
 ```bash
-git -C /Users/avigoldman/nycfirst-d13.github.io add present/
-git -C /Users/avigoldman/nycfirst-d13.github.io commit -m "feat(present): ..."
+git -C /Users/avigoldman/d13 add present/
+git -C /Users/avigoldman/d13 commit -m "feat(present): ..."
 ```
 
 Scope each commit to this directory only — never a bare `git add .` that sweeps in other apps.
