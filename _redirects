@@ -1,12 +1,16 @@
-# TEMPORARY probe — testing whether _redirects 200-proxy rules work under a
-# Webflow Cloud mount path, and which spelling the rule path takes.
-# Webflow docs: "Rule-path semantics for _redirects under non-root mount paths
-# are still being verified." Delete this file and the _probe-* dirs when done.
+# TEMPORARY probe round 2. Round 1 (source+target both bare, and both
+# mount-prefixed) had no effect. Assets are likely keyed WITHOUT the mount
+# prefix even though the incoming request carries it, so test the mixed
+# spellings — plus a plain 301 canary to prove whether this file is parsed.
 
-# a: rule written WITHOUT the mount prefix
-/_probe-a   /_probe-a/index.html   200
+# canary: does _redirects do ANYTHING? plain 301, both spellings
+/_canary            /home   301
+/d13-app/_canary2   /home   301
 
-# b: rule written WITH the mount prefix
-/d13-app/_probe-b   /d13-app/_probe-b/index.html   200
+# mixed 1: request path prefixed, asset target bare
+/d13-app/_probe-a   /_probe-a/index.html   200
 
-# c: no rule at all — control, should still exhibit the redirect loop
+# mixed 2: request path bare, asset target prefixed
+/_probe-b   /d13-app/_probe-b/index.html   200
+
+# _probe-c: still no rule — control
