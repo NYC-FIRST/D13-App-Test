@@ -97,7 +97,7 @@ play mid-game is invisible to the page — so keep this generous (e.g. `300000` 
 
 ## How it works (for maintainers)
 
-- `kiosk.js` is loaded by `index.html` and always active — it drives mouse,
+- `kiosk.js` is loaded by `../arcade.html` and always active — it drives mouse,
   keyboard, and gamepad navigation for the whole gallery.
 - `help.js` injects the Help button + popover into the header on both pages.
 - Navigation, launching, and return all happen **on the gallery page** — a

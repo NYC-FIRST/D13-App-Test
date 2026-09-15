@@ -8,7 +8,7 @@ automation account) for writes, gviz for
 reads. No server, no API keys, no secret in any public file.
 
 Same **hard rule** as stem-stations: no private key / secret ever goes in a
-GitHub Pages file. Secrets live only in the Apps Script backend.
+public static file on Webflow Cloud. Secrets live only in the Apps Script backend.
 
 ---
 
@@ -82,7 +82,7 @@ APPROVE  (staff, in the Sheet)
   → LIVE on next gallery load (~1 min, no rebuild)
 
 SERVE  (gallery, unchanged client-side except source + filter)
-  index.html grid: gviz CSV → parse → filter publish-gate → cards
+  arcade.html grid: gviz CSV → parse → filter publish-gate → cards
   games.html?id=: gviz CSV → findGame → iframe d13_url
 ```
 
